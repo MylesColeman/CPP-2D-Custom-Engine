@@ -12,7 +12,7 @@ public:
     void setAnimation(const Animation& animation)
     {
         m_animation = &animation;
-        this->setTexture(*m_animation->texture);
+        this->setTexture(*m_animation->texture, true);
         m_currentFrame = 0;
         m_animClock.restart();
     }
