@@ -14,11 +14,12 @@
 void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager);
 
 // Used by ImGUI dropdown (combo) box
-const char* items[] = { "Idle", "Walk", "Attack", "Death" };
+static const char* items[] = { "Idle", "Walk", "Attack", "Death" };
 static const char* current_item = "Idle";
 
-float frameCount{ 0 };
-sf::Clock frameClock;
+static sf::Clock frameClock;
+static int frameCount{ 0 };
+static float fps{ 0.0f };
 
 int main()
 {
@@ -59,8 +60,13 @@ int main()
   
     while (window.isOpen())
     {
+        // FPS Calculation
+		frameCount++; // Increments the frame count each loop of the game loop
+		// Calculates the FPS every second
         if (frameClock.getElapsedTime().asSeconds() >= 1.0f)
         {
+			fps = static_cast<float>(frameCount) / frameClock.getElapsedTime().asSeconds();
+
             frameCount = 0;
             frameClock.restart();
         }
@@ -92,8 +98,6 @@ int main()
         // UI needs drawing last
         ImGui::SFML::Render(window);
 
-		frameCount++;
-
         window.display();
     }
 
@@ -115,6 +119,8 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
 
     ImGui::Begin("GEC"); // Create a window called "3GP" and append into it.
 
+    ImGui::Text("%.2f FPS", fps); // Displays the FPS to two decimal places
+
 	// Dropdown (combo) box to select animation
 	if (ImGui::BeginCombo("Animation", current_item)) // Sets the default value to current_item (which is initially idle)
     {
@@ -135,8 +141,6 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
         }
 		ImGui::EndCombo();
     }
-
-    ImGui::Text("%4.2f FPS", frameCount);
 
     ImGui::End();
 }
