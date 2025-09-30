@@ -70,10 +70,10 @@ int main()
         // ImGui must be updated each frame
         ImGui::SFML::Update(window, uiDeltaClock.restart());
 
+        zombie.update();
+
         // The UI gets defined each time
         DefineGUI(&zombie, &animationManager);
-
-        zombie.update();
 
         // Clear the window
         window.clear();
@@ -135,7 +135,7 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
 		ImGui::EndCombo();
     }
 
-    //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
     ImGui::End();
 }
