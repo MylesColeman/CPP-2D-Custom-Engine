@@ -42,7 +42,7 @@ int main()
     AnimationManager animationManager(textureManager);
 
     // Zombie Animation Setup
-	//Loading the sprite sheets and configuring the animations
+	// Loading the sprite sheets and configuring the animations
     animationManager.configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
     animationManager.configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
     animationManager.configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
