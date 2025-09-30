@@ -17,6 +17,22 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager);
 const char* items[] = { "Idle", "Walk", "Attack", "Death" };
 static const char* current_item = "Idle";
 
+float averageFPSCounter()
+{
+    static int frameCount{ 0 };
+	static sf::Clock frameClock;
+
+    frameCount++;
+    if (frameClock.getElapsedTime().asSeconds() >= 1.0f)
+    {
+        std::cout << "FPS: " << frameCount << std::endl;
+        frameCount = 0;
+        frameClock.restart();
+	}
+
+	return frameCount;
+}
+
 int main()
 {
     // Redirect cout to the Visual Studio output pane
@@ -83,6 +99,7 @@ int main()
         // UI needs drawing last
         ImGui::SFML::Render(window);
 
+		averageFPSCounter();
         window.display();
     }
 
@@ -125,7 +142,7 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
 		ImGui::EndCombo();
     }
 
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::Text("");
 
     ImGui::End();
 }
