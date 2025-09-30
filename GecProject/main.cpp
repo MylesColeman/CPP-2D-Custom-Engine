@@ -17,21 +17,8 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager);
 const char* items[] = { "Idle", "Walk", "Attack", "Death" };
 static const char* current_item = "Idle";
 
-float averageFPSCounter()
-{
-    static int frameCount{ 0 };
-	static sf::Clock frameClock;
-
-    frameCount++;
-    if (frameClock.getElapsedTime().asSeconds() >= 1.0f)
-    {
-        std::cout << "FPS: " << frameCount << std::endl;
-        frameCount = 0;
-        frameClock.restart();
-	}
-
-	return frameCount;
-}
+float frameCount{ 0 };
+sf::Clock frameClock;
 
 int main()
 {
@@ -72,6 +59,12 @@ int main()
   
     while (window.isOpen())
     {
+        if (frameClock.getElapsedTime().asSeconds() >= 1.0f)
+        {
+            frameCount = 0;
+            frameClock.restart();
+        }
+
         // Process events
         while (const std::optional event = window.pollEvent())
         {
@@ -99,7 +92,8 @@ int main()
         // UI needs drawing last
         ImGui::SFML::Render(window);
 
-		averageFPSCounter();
+		frameCount++;
+
         window.display();
     }
 
@@ -142,7 +136,7 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
 		ImGui::EndCombo();
     }
 
-    ImGui::Text("");
+    ImGui::Text("%4.2f FPS", frameCount);
 
     ImGui::End();
 }
