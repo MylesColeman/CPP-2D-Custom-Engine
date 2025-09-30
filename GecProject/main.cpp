@@ -104,16 +104,6 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager)
 
     ImGui::Begin("GEC"); // Create a window called "3GP" and append into it.
 
-    //ImGui::Text("Some Text."); // Display some text (you can use a format strings too)	
-
-    //ImGui::Button("Button"); // Buttons return true when clicked (most widgets return true when edited/activated)
-    
-    //ImGui::Checkbox("Wireframe", &m_wireframe); // A checkbox linked to a member variable
-
-    //ImGui::Checkbox("Cull Face", &m_cullFace);
-
-    //ImGui::SliderFloat("Animation Speed", currentAnimation, 1.f, 3.f);
-
 	// Dropdown (combo) box to select animation
 	if (ImGui::BeginCombo("Animation", current_item)) // Sets the default value to current_item (which is initially idle)
     {
