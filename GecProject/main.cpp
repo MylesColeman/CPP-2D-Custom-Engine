@@ -10,6 +10,7 @@
 #include "SpriteAnimator.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager);
 
@@ -55,6 +56,18 @@ int main()
     SpriteAnimator zombie(animationManager.getAnimation("zombieIdle")); // Loads the idle animation
     zombie.setAnimation(animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 
+	// Testing multiple animated sprites
+	std::vector<SpriteAnimator> zombies;
+	const Animation& zombieAnim = animationManager.getAnimation("zombieIdle");
+
+    for (int i = 0; i < 100; ++i)
+    {
+        zombie.setAnimation(zombieAnim); // Plays the idle animation
+        zombie.setPosition({ static_cast<float>(rand() % (800 - zombieAnim.spriteWidth)) ,  static_cast<float>(rand() % (600 - zombieAnim.spriteHeight)) });
+
+		zombies.push_back(zombie);
+    }
+
     // Clock required by ImGui
     sf::Clock uiDeltaClock;
   
@@ -87,6 +100,12 @@ int main()
 
         zombie.update();
 
+		// Loop to update multiple animated sprites
+        for (auto& zombie : zombies)
+        {
+            zombie.update();
+        }
+
         // The UI gets defined each time
         DefineGUI(&zombie, &animationManager);
 
@@ -94,6 +113,12 @@ int main()
         window.clear();
        
 		window.draw(zombie);
+
+		// Loop to draw multiple animated sprites
+        for (const auto& zombie : zombies)
+        {
+            window.draw(zombie);
+		}
 
         // UI needs drawing last
         ImGui::SFML::Render(window);
