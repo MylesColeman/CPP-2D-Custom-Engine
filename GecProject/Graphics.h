@@ -10,7 +10,7 @@ public:
 	Graphics();
 	void display(); // Will be called in main, running all the graphics/display logic
 private:
-	void windowEvents(); // If the window is closed
+	void windowEvents(); // Handles the windows events/interactions, movement, editing and closing
 	void update(); // Handles the updating of sprites/textures/animations
 	void render(); // The actual logic behind displaying the sprite to the window
 

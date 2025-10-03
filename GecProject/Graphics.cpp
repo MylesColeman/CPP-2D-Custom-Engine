@@ -38,14 +38,10 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager, const char
     ImGui::End();
 }
 
-// Used to set up the textures and animations - outside of the window loop. So they're only done once, at the start. 
+// Sets up the window, animation manager, and the sprite animator for zombie
 Graphics::Graphics() : m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"), m_animationManager(m_textureManager), m_zombie(m_animationManager.getAnimation("zombieIdle"))
 {
-    // Create the SFML window
-
-
-    // Set up ImGui (the UI library)
-    ImGui::SFML::Init(m_window);
+    ImGui::SFML::Init(m_window); // Set up ImGui (the UI library)
 
     m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 }
@@ -55,6 +51,7 @@ void Graphics::display()
 {
     while (m_window.isOpen())
     {
+        windowEvents();
         update();
         render();
     }
@@ -62,6 +59,7 @@ void Graphics::display()
     ImGui::SFML::Shutdown();
 }
 
+// Handles the windows events/interactions, movement, editing and closing
 void Graphics::windowEvents()
 {
     // Process events
