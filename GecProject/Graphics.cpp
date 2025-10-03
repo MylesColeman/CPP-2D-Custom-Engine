@@ -15,12 +15,12 @@ Graphics::Graphics() : m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"
 
     // Zombie Animation Setup
     // Loading the sprite sheets and configuring the animations
-    animationManager.configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
-    animationManager.configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
-    animationManager.configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
-    animationManager.configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
+    m_animationManager.configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
+    m_animationManager.configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
+    m_animationManager.configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
+    m_animationManager.configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
 
-    zombie.setAnimation(animationManager.getAnimation("zombieIdle")); // Plays the idle animation
+    m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 }
 
 // Will be called in main, running all the graphics/display logic
