@@ -30,13 +30,20 @@ public:
 	// Assigns variables to the structure, so the animation can be used
 	void configureAnimation(const std::string animName, const std::string textureFilePath, int frameCount, float animSpeed = 0.1f)
 	{
-		sf::Texture& texture = m_textureManager.getTexture(textureFilePath);
+		sf::Texture* texture = m_textureManager.getTexture(textureFilePath);
+		// Checks if there isn't a texture
+		if (texture == nullptr)
+		{
+			std::cout << "Could not configure animation " << animName << "! Due to a missing texture!" << std::endl;
+			return;
+		}
+
 		Animation anim;
 
-		anim.texture = &texture;
+		anim.texture = texture;
 		anim.numFrames = frameCount;
-		anim.spriteWidth = texture.getSize().x;
-		anim.spriteHeight = texture.getSize().y / frameCount;
+		anim.spriteWidth = texture->getSize().x;
+		anim.spriteHeight = texture->getSize().y / frameCount;
 		anim.timeBetweenFrames = animSpeed;
 
 		m_animations[animName] = anim;
