@@ -44,9 +44,7 @@ Graphics::Graphics() : m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"
 {
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 
-    {
         std::cout << "ImGUI could not be loaded!" << std::endl;
-    }
 
     m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 }
