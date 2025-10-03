@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include "ExternalHeaders.h"
+#include <iostream>
 
 /*
     Use IMGUI for a simple on screen GUI
@@ -41,7 +42,11 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager, const char
 // Sets up the window, animation manager, and the sprite animator for zombie
 Graphics::Graphics() : m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"), m_animationManager(m_textureManager), m_zombie(m_animationManager.getAnimation("zombieIdle"))
 {
-    ImGui::SFML::Init(m_window); // Set up ImGui (the UI library)
+    // Set up ImGui (the UI library)
+    if (!ImGui::SFML::Init(m_window)) 
+    {
+        std::cout << "ImGUI could not be loaded!" << std::endl;
+    }
 
     m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 }
