@@ -34,17 +34,6 @@ int main()
   
     while (window.isOpen())
     {
-        // FPS Calculation
-		frameCount++; // Increments the frame count each loop of the game loop
-		// Calculates the FPS every second
-        if (frameClock.getElapsedTime().asSeconds() >= 1.0f)
-        {
-			fps = static_cast<float>(frameCount) / frameClock.getElapsedTime().asSeconds();
-
-            frameCount = 0;
-            frameClock.restart();
-        }
-
         // Process events
         while (const std::optional event = window.pollEvent())
         {

@@ -26,6 +26,17 @@ void Graphics::display()
 {
     while (m_window.isOpen())
     {
+        // FPS Calculation
+        m_frameCount++; // Increments the frame count each loop of the game loop
+        // Calculates the FPS every second
+        if (m_frameClock.getElapsedTime().asSeconds() >= 1.0f)
+        {
+            m_fps = static_cast<float>(m_frameCount) / m_frameClock.getElapsedTime().asSeconds();
+
+            m_frameCount = 0;
+            m_frameClock.restart();
+        }
+
         update();
         render();
     }
