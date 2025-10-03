@@ -1,0 +1,33 @@
+Myles Coleman
+Milestone 1 Version 0.1 and 03/10/2025
+--------------------------------
+
+New Functionality
+-----------------
+
+- Can create a custom animated sprite which has a texture, number of frames, sprite width and height, and a time between frames (speed)
+- This sprite allows the first frame to be set, as well as having a function to update the intRect based on which sprite/frame to display
+
+Code Additions
+--------------
+
+- Created a texture manager class 
+	- This checks whether a texture has been loaded, if not it loads it. Adding it to a map with a name, so it can easily be referenced 
+- Created an animation manager class 
+	- This has a function which sets up the necessary data for an animation, assigns texture, number of frames, sprite width and height and time between frames (speed)
+	- Has a getter function which allows the animation to be accessed in other scripts
+- Created a sprite animator class
+	- This has a set animation function sets up the animation for the sprite, setting the texture, resets to the first frame, resets the animation clock used for speed and sets the intRect's size and position ready for the first frame
+- Created a drop down box for the ImGUI - this allows easy switching through animations for debugging
+- Calculating the FPS over a second, and then displaying this through the ImGUI
+
+Tests
+-----
+
+- Tested the sprite with a number of textures and animations - correctly displaying and updating
+- Tested the limits of the engine via creating 100 sprites with textures and then animating them - no errors arose
+
+Notes
+-----
+
+- Need to encapsulate all the graphics logic within its own graphics class
