@@ -16,11 +16,6 @@ void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager);
 // Used by ImGUI dropdown (combo) box
 static const char* items[] = { "Idle", "Walk", "Attack", "Death" };
 static const char* current_item = "Idle";
-
-static sf::Clock frameClock;
-static int frameCount{ 0 };
-static float fps{ 0.0f };
-
 int main()
 {
     // Redirect cout to the Visual Studio output pane
@@ -33,27 +28,6 @@ int main()
 
     // Turn on memory leak checking
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-    // Create the SFML window
-    sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "GEC Start Project");
-
-    // Set up ImGui (the UI library)
-    if (!ImGui::SFML::Init(window))
-        return -1;
-
-    // Animation Logic
-    TextureManager textureManager;
-    AnimationManager animationManager(textureManager);
-
-    // Zombie Animation Setup
-	// Loading the sprite sheets and configuring the animations
-    animationManager.configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
-    animationManager.configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
-    animationManager.configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
-    animationManager.configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
-
-    SpriteAnimator zombie(animationManager.getAnimation("zombieIdle")); // Loads the idle animation
-    zombie.setAnimation(animationManager.getAnimation("zombieIdle")); // Plays the idle animation
 
     // Clock required by ImGui
     sf::Clock uiDeltaClock;
