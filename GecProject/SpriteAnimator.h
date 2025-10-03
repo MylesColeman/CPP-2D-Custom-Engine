@@ -15,6 +15,10 @@ public:
         this->setTexture(*m_animation->texture, true);
         m_currentFrame = 0;
         m_animClock.restart();
+
+        // Calculates and sets the intRect for the first frame. Otherwise the entire spritesheet would be shown till it was set in update
+        int intRectsYPos = m_currentFrame * m_animation->spriteHeight;
+        this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
     }
 
     // Checks whether there is a assigned animation, and if so updates it based on a set time
