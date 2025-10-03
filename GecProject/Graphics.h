@@ -10,6 +10,7 @@ public:
 	Graphics();
 	void display(); // Will be called in main, running all the graphics/display logic
 private:
+	void windowEvents(); // If the window is closed
 	void update(); // Handles the updating of sprites/textures/animations
 	void render(); // The actual logic behind displaying the sprite to the window
 
@@ -17,6 +18,12 @@ private:
 	TextureManager m_textureManager;
 	AnimationManager m_animationManager;
 	SpriteAnimator m_zombie;
+
+	// Clock required by ImGui
+	sf::Clock m_uiDeltaClock;
+	// Used by ImGUI dropdown (combo) box
+	const char* m_items[4] = { "Idle", "Walk", "Attack", "Death" };
+	const char* m_current_item = "Idle";
 
 	sf::Clock m_frameClock;
 	int m_frameCount{ 0 };
