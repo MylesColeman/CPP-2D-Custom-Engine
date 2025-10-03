@@ -137,7 +137,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="IMGUI\imgui-SFML.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
@@ -149,7 +148,6 @@
   <ItemGroup>
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ExternalHeaders.h" />
-    <ClInclude Include="Graphics.h" />
     <ClInclude Include="SpriteAnimator.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>

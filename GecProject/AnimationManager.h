@@ -17,16 +17,7 @@ struct Animation
 class AnimationManager
 {
 public:
-	AnimationManager(TextureManager& texureManager) : m_textureManager(texureManager) 
-	{
-		// Zombie Animation Setup
-	// Loading the sprite sheets and configuring the animations
-
-		configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
-		configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
-		configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
-		configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
-	}
+	AnimationManager(TextureManager& texureManager) : m_textureManager(texureManager) {}
 
 	// Assigns variables to the structure, so the animation can be used
 	void configureAnimation(const std::string animName, const std::string textureFilePath, int frameCount, float animSpeed = 0.1f)
