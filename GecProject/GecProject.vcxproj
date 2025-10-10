@@ -145,11 +145,14 @@
     <ClCompile Include="IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RedirectCout.h" />
+    <ClCompile Include="SimulationSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ExternalHeaders.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="SimulationSystem.h" />
     <ClInclude Include="SpriteAnimator.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
