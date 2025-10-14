@@ -156,7 +156,7 @@
     <ClInclude Include="IReceivesInput.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="SimulationSystem.h" />
-    <ClInclude Include="SpriteAnimator.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>

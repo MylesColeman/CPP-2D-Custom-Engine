@@ -6,7 +6,7 @@
     Use IMGUI for a simple on screen GUI
     See: https://github.com/ocornut/imgui/wiki/
 */
-void DefineGUI(SpriteAnimator* zombie, AnimationManager* animManager, const char* current_item, const char* items[], float fps)
+void DefineGUI(Entity* zombie, AnimationManager* animManager, const char* current_item, const char* items[], float fps)
 {
     // Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
