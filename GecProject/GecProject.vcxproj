@@ -143,6 +143,7 @@
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
     <ClCompile Include="IMGUI\imgui_tables.cpp" />
     <ClCompile Include="IMGUI\imgui_widgets.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RedirectCout.h" />
     <ClCompile Include="SimulationSystem.cpp" />
@@ -151,6 +152,8 @@
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="ExternalHeaders.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="IReceivesInput.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="SimulationSystem.h" />
     <ClInclude Include="SpriteAnimator.h" />
