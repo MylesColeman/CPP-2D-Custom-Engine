@@ -14,5 +14,5 @@ enum class Actions
 class IReceivesInput
 {
 public:
-	virtual void HandleInput(const std::vector<Actions>& action) = 0; // This function takes a vector of actions to handle multiple inputs at once
+	virtual void handleInput(const std::vector<Actions>& action) = 0; // This function takes a vector of actions to handle multiple inputs at once
 };

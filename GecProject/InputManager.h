@@ -16,6 +16,6 @@ public:
 		return manager;
 	}
 
-	void AddListener(IReceivesInput* listener);
-	void Update();
+	void addListener(IReceivesInput* listener);
+	void update();
 };

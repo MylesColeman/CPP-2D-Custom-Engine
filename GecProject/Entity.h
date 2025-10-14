@@ -9,7 +9,8 @@ class Entity : public sf::Sprite
 {
 public:
     // Default entity constructor, sets the animation to be used, and assigns the hitbox to the size of the sprite
-    explicit Entity(const Animation& animation) : sf::Sprite(*animation.texture) 
+    explicit Entity(const Animation& animation) : 
+        sf::Sprite(*animation.texture) 
     {
 		this->setAnimation(animation);
 

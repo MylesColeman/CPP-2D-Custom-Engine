@@ -1,12 +1,12 @@
 #include "InputManager.h"
 
 // Adds a listener for input events, so they can handle input events
-void InputManager::AddListener(IReceivesInput* listener)
+void InputManager::addListener(IReceivesInput* listener)
 {
 	m_listeners.push_back(listener);
 }
 
-void InputManager::Update()
+void InputManager::update()
 {
 	Actions action{ Actions::eNone }; // Defaults the action to nothing - no key is pressed
 	std::vector<Actions> actions;
@@ -25,6 +25,6 @@ void InputManager::Update()
 	for (IReceivesInput* listeners : m_listeners)
 	{
 		if (!actions.empty())
-			listeners->HandleInput(actions);
+			listeners->handleInput(actions);
 	}
 }
