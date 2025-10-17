@@ -1,7 +1,7 @@
 #pragma once
-#include "TextureManager.h"
-#include "AnimationManager.h"
 #include "Entity.h"
+#include "PlayerEntity.h"
+#include "InputManager.h"
 #include <SFML/Graphics.hpp>
 
 class Graphics
@@ -17,7 +17,11 @@ private:
 	sf::RenderWindow m_window;
 	TextureManager m_textureManager;
 	AnimationManager m_animationManager;
+
+	InputManager m_inputManager;
+
 	Entity m_zombie;
+	PlayerEntity m_player;
 
 	// Clock required by ImGui
 	sf::Clock m_uiDeltaClock;

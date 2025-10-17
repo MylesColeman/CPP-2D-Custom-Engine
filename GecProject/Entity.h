@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimationManager.h"
-#include "Rectangle.h"
+#include "CollisionRectangle.h"
 #include <SFML/Graphics.hpp>
 
 // Our base class for entities within our game world, inherits from sf::Sprite to allow easy drawing and manipulation of sprites
@@ -63,11 +63,11 @@ public:
 		m_hitBox.m_yPos = this->getPosition().y;
     }
 
-	const Rectangle& getHitBox() const { return m_hitBox; } // Returns the hitbox of the entity for collision detection
+	const CollisionRectangle& getHitBox() const { return m_hitBox; } // Returns the hitbox of the entity for collision detection
 
 protected:
     const Animation* m_animation{ nullptr };
-    Rectangle m_hitBox; // The hitbox for the entity, used for collision detection
+    CollisionRectangle m_hitBox; // The hitbox for the entity, used for collision detection
     sf::Vector2f m_velocity{ 0.f, 0.f }; // The velocity of the entity, used for movement
 private:
     sf::Clock m_animClock;

@@ -8,7 +8,6 @@ void InputManager::addListener(IReceivesInput* listener)
 
 void InputManager::update()
 {
-	Actions action{ Actions::eNone }; // Defaults the action to nothing - no key is pressed
 	std::vector<Actions> actions;
 
 	// Checks for key presses and adds them to to the actions vector - so the listeners can handle multiple inputs
@@ -24,7 +23,8 @@ void InputManager::update()
 	// Loops through all listeners and handles the input - if there are any
 	for (IReceivesInput* listeners : m_listeners)
 	{
-		if (!actions.empty())
-			listeners->handleInput(actions);
+		listeners->handleInput(actions);
 	}
+
+	actions.clear(); // Clears the vector, so its not holding redundant data next frame
 }

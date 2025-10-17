@@ -40,13 +40,20 @@ void DefineGUI(Entity* zombie, AnimationManager* animManager, const char* curren
 }
 
 // Sets up the window, animation manager, and the sprite animator for zombie
-Graphics::Graphics() : m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"), m_animationManager(m_textureManager), m_zombie(m_animationManager.getAnimation("zombieIdle"))
+Graphics::Graphics() : 
+    m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"), 
+    m_animationManager(m_textureManager), 
+    m_zombie(m_animationManager.getAnimation("zombieIdle")),
+	m_player(m_animationManager.getAnimation("zombieWalk"))
 {
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 
         std::cout << "ImGUI could not be loaded!" << std::endl;
 
+	m_inputManager.addListener(&m_player); // Adds the player as a listener to input events
+
     m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
+	m_player.setAnimation(m_animationManager.getAnimation("zombieWalk"));
 }
 
 // Will be called in main, running all the graphics/display logic
@@ -84,6 +91,8 @@ void Graphics::update()
     ImGui::SFML::Update(m_window, m_uiDeltaClock.restart());
 
     m_zombie.update();
+	m_inputManager.update(); // Updates the input manager to handle any input events
+	m_player.update();
 
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop
@@ -107,6 +116,7 @@ void Graphics::render()
     DefineGUI(&m_zombie, &m_animationManager, m_current_item, m_items, m_fps);
 
     m_window.draw(m_zombie);
+	m_window.draw(m_player);
 
     // UI needs drawing last
     ImGui::SFML::Render(m_window);
