@@ -25,6 +25,4 @@ void InputManager::update()
 	{
 		listeners->handleInput(actions);
 	}
-
-	actions.clear(); // Clears the vector, so its not holding redundant data next frame
 }
