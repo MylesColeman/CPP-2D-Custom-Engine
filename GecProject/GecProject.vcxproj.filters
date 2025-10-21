@@ -85,6 +85,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Milestone Template.txt" />
+    <Text Include="..\Milestone Devlog.txt" />
   </ItemGroup>
 </Project>
