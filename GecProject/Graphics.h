@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "PlayerEntity.h"
 #include "InputManager.h"
-#include <SFML/Graphics.hpp>
 
 class Graphics
 {
@@ -32,5 +31,4 @@ private:
 	sf::Clock m_frameClock;
 	int m_frameCount{ 0 };
 	float m_fps{ 0.0f };
-
 };

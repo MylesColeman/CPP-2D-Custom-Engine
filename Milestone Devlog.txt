@@ -31,3 +31,40 @@ Notes
 -----
 
 - Need to encapsulate all the graphics logic within its own graphics class
+
+---------------------------------------------------------------------------------------------------------------------------
+
+Milestone 2 Version 0.2 and 24/10/2025
+--------------------------------
+
+New Functionality
+-----------------
+
+- Through inheriting from the base entity class, can now create a player entity
+	- This player entity through the input manager can move around the screen with WASD keys
+- Collision detection through the collision rectangle class, which has been added to the base entity class
+
+Code Additions
+--------------
+
+- Renamed the sprite animator class to entity, to better reflect its purpose moving forward
+- Encapsulated the graphics logic into its own graphics class
+	- This handles window creation and events, sets up the ImGui, rendering, and updating the entities
+- Inherited from the entity class to create a player class
+- Created an input manager using the observer pattern
+	- Listeners for this manager are added in the graphics class
+		- The player is a listener and allows movement based on keyboard input (WASD)
+
+- Removed some redundant header inclusions across various files
+
+Tests
+-----
+
+- 
+
+Notes
+-----
+
+- Improve the movement of the player code
+- Add collisions which inhibit movement
+- Handle simulations in the simulation system

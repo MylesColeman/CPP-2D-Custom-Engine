@@ -94,6 +94,14 @@ void Graphics::update()
 	m_inputManager.update(); // Updates the input manager to handle any input events
 	m_player.update();
 
+    // Get hitboxes for collision detection
+    const CollisionRectangle& playerHitBox = m_player.getHitBox();
+    const CollisionRectangle& zombieHitBox = m_zombie.getHitBox();
+
+	// Checks whether the player hitbox intersects with the zombie hitbox
+    if (playerHitBox.intersection(zombieHitBox))
+        std::cout << "Collision Detected!" << std::endl; // Testing for collision
+
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop
     // Calculates the FPS every second
