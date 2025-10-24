@@ -33,4 +33,6 @@ private:
 	int m_frameCount{ 0 };
 	float m_fps{ 0.0f };
 
+	sf::RectangleShape playerRect;
+	sf::RectangleShape zombieRect;
 };

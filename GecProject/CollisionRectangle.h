@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 // Used to represent an entities hitbox - for collisions
 class CollisionRectangle

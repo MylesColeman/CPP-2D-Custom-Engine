@@ -52,8 +52,11 @@ Graphics::Graphics() :
 
 	m_inputManager.addListener(&m_player); // Adds the player as a listener to input events
 
-    m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); // Plays the idle animation
+	// Sets the initial animation for the zombie
+    m_zombie.setAnimation(m_animationManager.getAnimation("zombieIdle")); 
 	m_player.setAnimation(m_animationManager.getAnimation("zombieWalk"));
+
+    m_player.setPosition({ 400.f, 300.f }); // Sets the player in the center of the window
 }
 
 // Will be called in main, running all the graphics/display logic
@@ -94,6 +97,24 @@ void Graphics::update()
 	m_inputManager.update(); // Updates the input manager to handle any input events
 	m_player.update();
 
+	// Get hitboxes for collision detection
+	const CollisionRectangle& playerHitBox = m_player.getHitBox();
+	const CollisionRectangle& zombieHitBox = m_zombie.getHitBox();
+
+    // Collision Rectangle Visualisation
+    playerRect.setPosition({ playerHitBox.m_xPos, playerHitBox.m_yPos });
+	playerRect.setSize({ static_cast<float>(playerHitBox.m_width), static_cast<float>(playerHitBox.m_height) });
+	playerRect.setFillColor(sf::Color(0, 0, 255, 100)); // Semi-transparent blue
+
+    zombieRect.setPosition({ zombieHitBox.m_xPos, zombieHitBox.m_yPos });
+    zombieRect.setSize({ static_cast<float>(zombieHitBox.m_width), static_cast<float>(zombieHitBox.m_height) });
+    zombieRect.setFillColor(sf::Color(255, 0, 0, 100)); // Semi-transparent blue
+
+    if (playerHitBox.intersection(zombieHitBox))
+    {
+        std::cout << "Collision Detected!" << std::endl; // Testing for collision
+	}
+
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop
     // Calculates the FPS every second
@@ -117,6 +138,9 @@ void Graphics::render()
 
     m_window.draw(m_zombie);
 	m_window.draw(m_player);
+
+    m_window.draw(playerRect);
+	m_window.draw(zombieRect);
 
     // UI needs drawing last
     ImGui::SFML::Render(m_window);
