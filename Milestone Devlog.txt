@@ -60,7 +60,10 @@ Code Additions
 Tests
 -----
 
-- 
+- Tested new encapsulated graphics class with 100 sprites (including players) - works as expected
+- Added debug rectangle representing the collision hitbox - ensuring the collision rectangle is accurate
+- Tested player movement in all directions - works as expected
+	- Tested simultaneous key presses (diagonal movement) - works as expected for diagonal movement. However if opposite directions are pressed down and right take priority
 
 Notes
 -----
