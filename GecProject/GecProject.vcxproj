@@ -147,7 +147,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="RedirectCout.h" />
-    <ClCompile Include="SimulationSystem.cpp" />
+    <ClCompile Include="Simulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationManager.h" />
@@ -157,7 +157,7 @@
     <ClInclude Include="IReceivesInput.h" />
     <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="CollisionRectangle.h" />
-    <ClInclude Include="SimulationSystem.h" />
+    <ClInclude Include="Simulation.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>

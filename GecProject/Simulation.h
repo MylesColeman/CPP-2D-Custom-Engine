@@ -6,10 +6,10 @@
 #include <memory>
 #include <iostream>
 
-class SimulationSystem
+class Simulation
 {
 public:
-    SimulationSystem(TextureManager& textureManager);
+    Simulation(TextureManager& textureManager);
     void update(); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
     // A getter function for the entities for use in the graphics (for rendering)

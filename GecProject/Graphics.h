@@ -1,5 +1,5 @@
 #pragma once
-#include "SimulationSystem.h"
+#include "Simulation.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -15,7 +15,7 @@ private:
 
 	sf::RenderWindow m_window;
 	TextureManager m_textureManager; // Passed into the simulation to be used by the animation manager
-	SimulationSystem m_simulation;
+	Simulation m_simulation;
 
 	sf::Clock m_uiDeltaClock; // Used by ImGui for updating
 

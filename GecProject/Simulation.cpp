@@ -1,6 +1,6 @@
-#include "SimulationSystem.h"
+#include "Simulation.h"
 
-SimulationSystem::SimulationSystem(TextureManager& textureManager) :
+Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
     auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("zombieWalk"));
@@ -14,7 +14,7 @@ SimulationSystem::SimulationSystem(TextureManager& textureManager) :
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
-void SimulationSystem::update()
+void Simulation::update()
 {
     m_inputManager.update();
 
