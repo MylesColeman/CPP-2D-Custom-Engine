@@ -1,7 +1,7 @@
 #pragma once
-#include "Entity.h"
-#include "PlayerEntity.h"
-#include "InputManager.h"
+#include "SimulationSystem.h"
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 class Graphics
 {
@@ -15,18 +15,9 @@ private:
 
 	sf::RenderWindow m_window;
 	TextureManager m_textureManager;
-	AnimationManager m_animationManager;
+	SimulationSystem m_simulation;
 
-	InputManager m_inputManager;
-
-	Entity m_zombie;
-	PlayerEntity m_player;
-
-	// Clock required by ImGui
-	sf::Clock m_uiDeltaClock;
-	// Used by ImGUI dropdown (combo) box
-	const char* m_items[4] = { "Idle", "Walk", "Attack", "Death" };
-	const char* m_current_item = "Idle";
+	sf::Clock m_uiDeltaClock; // Used by ImGui for updating
 
 	sf::Clock m_frameClock;
 	int m_frameCount{ 0 };
