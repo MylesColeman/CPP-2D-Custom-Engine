@@ -63,7 +63,7 @@ public:
 		m_hitBox.m_yPos = this->getPosition().y;
     }
 
-	const CollisionRectangle& getHitBox() const { return m_hitBox; } // Returns the hitbox of the entity for collision detection
+	const CollisionRectangle& getHitbox() const { return m_hitBox; } // Returns the hitbox of the entity for collision detection
 
 protected:
     const Animation* m_animation{ nullptr };
