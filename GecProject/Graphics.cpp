@@ -1,6 +1,5 @@
 #include "Graphics.h"
 #include "ExternalHeaders.h"
-#include <iostream>
 
 /*
     Use IMGUI for a simple on screen GUI
@@ -21,7 +20,6 @@ void DefineGUI(float fps)
 // Sets up the window, animation manager, and the sprite animator for zombie
 Graphics::Graphics() : 
     m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"),
-	m_textureManager(),
 	m_simulation(m_textureManager)
 {
     // Set up ImGui (the UI library)
@@ -57,7 +55,7 @@ void Graphics::windowEvents()
     }
 }
 
-// Handles the updating of sprites/textures/animations
+// Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 void Graphics::update()
 {
     // ImGui must be updated each frame
@@ -85,7 +83,9 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
-    // Loop through a vector of all entities and draw them
+    // Loops through the vector of entities created in the simulation, and draws them
+    for (const auto& entity : m_simulation.getEntities())
+        m_window.draw(*entity);
 
     // UI needs drawing last
     ImGui::SFML::Render(m_window);
