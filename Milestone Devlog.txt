@@ -92,7 +92,7 @@ Code Additions
 Tests
 -----
 
-- Ran the code to ensure all still works, as no code was added, just moved this is sufficient - works as expected
+- Ran the code to ensure all still works, as no code was added, just moved, this is sufficient - works as expected
 
 Notes
 -----
