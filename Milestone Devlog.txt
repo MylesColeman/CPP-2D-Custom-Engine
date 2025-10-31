@@ -54,7 +54,6 @@ Code Additions
 - Created an input manager using the observer pattern
 	- Listeners for this manager are added in the graphics class
 		- The player is a listener and allows movement based on keyboard input (WASD)
-
 - Removed some redundant header inclusions across various files
 
 Tests
@@ -71,3 +70,34 @@ Notes
 - Improve the movement of the player code
 - Add collisions which inhibit movement
 - Handle simulations in the simulation system
+
+---------------------------------------------------------------------------------------------------------------------------
+
+Milestone 3 Version 0.3 and 31/10/2025
+--------------------------------
+
+New Functionality
+-----------------
+
+- Separated simulation from graphics, through the simulation class
+	- This handles the updating of all entities and their collisions
+
+Code Additions
+--------------
+
+- Implemented the simulation class
+	- Moved all the updating of entities which was being done in the graphics class, to the simulation class
+		- As well as handling the collision logic
+
+Tests
+-----
+
+- Ran the code to ensure all still works, as no code was added, just moved this is sufficient - works as expected
+
+Notes
+-----
+
+- Whilst the milestones are technically completed there are a few changes to help refine the project
+	- Improve the player's movement code
+	- Add collisions which inhibit movement
+- Decide upon and implement a game using this engine
