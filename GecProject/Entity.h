@@ -14,8 +14,9 @@ public:
     {
 		this->setAnimation(animation);
 
-		m_hitBox.m_height = m_animation->spriteHeight;
-		m_hitBox.m_width = m_animation->spriteWidth;
+		m_hitbox.m_height = m_animation->spriteHeight;
+		m_hitbox.m_width = m_animation->spriteWidth;
+		m_hitbox.m_colliderType = ColliderType::Solid;
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes
@@ -59,15 +60,15 @@ public:
 		this->move(m_velocity); // Moves the entity based on its velocity
 
 		// Updates the hitbox position ensuring it matches the entity's position - follows
-		m_hitBox.m_xPos = this->getPosition().x;
-		m_hitBox.m_yPos = this->getPosition().y;
+		m_hitbox.m_xPos = this->getPosition().x;
+		m_hitbox.m_yPos = this->getPosition().y;
     }
 
-	const CollisionRectangle& getHitbox() const { return m_hitBox; } // Returns the hitbox of the entity for collision detection
+	const CollisionRectangle& getHitbox() const { return m_hitbox; } // Returns the hitbox of the entity for collision detection
 
 protected:
     const Animation* m_animation{ nullptr };
-    CollisionRectangle m_hitBox; // The hitbox for the entity, used for collision detection
+    CollisionRectangle m_hitbox; // The hitbox for the entity, used for collision detection
     sf::Vector2f m_velocity{ 0.f, 0.f }; // The velocity of the entity, used for movement
 private:
     sf::Clock m_animClock;

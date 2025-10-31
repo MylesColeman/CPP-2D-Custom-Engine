@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "PlayerEntity.h"
 #include "InputManager.h"
+#include "CollisionRectangle.h"
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -17,11 +18,14 @@ public:
     {
         return m_entities;
     }
+
+    std::vector<CollisionRectangle> m_collisionRects;
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;
 
     std::vector<std::unique_ptr<Entity>> m_entities; // Scalable approach used for updating and rendering
+
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
     Entity* m_zombie{ nullptr };

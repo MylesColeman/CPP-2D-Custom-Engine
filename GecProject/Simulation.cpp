@@ -14,6 +14,10 @@ Simulation::Simulation(TextureManager& textureManager) :
     auto zombie = std::make_unique<Entity>(m_animationManager.getAnimation("zombieIdle"));
     m_zombie = zombie.get();
     m_entities.push_back(std::move(zombie));
+
+    // Creating collision rectangles
+    // Event Trigger Test
+	m_collisionRects.push_back(CollisionRectangle(0.f, 0.f, 50, 50, ColliderType::Trigger));
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
@@ -32,4 +36,15 @@ void Simulation::update()
     // Collision detection
     if (playerHitbox.intersection(zombieHitbox))
         std::cout << "Collision Detected!" << std::endl;
+
+    for (const auto& collider : m_collisionRects)
+    {
+        if (playerHitbox.intersection(collider))
+        {
+            if (collider.m_colliderType == ColliderType::Trigger)
+                std::cout << "Player triggered an event!" << std::endl;
+            else if (collider.m_colliderType == ColliderType::Solid)
+                std::cout << "player hit a solid object, and has been obstructed!" << std::endl;
+        }
+    }
 }

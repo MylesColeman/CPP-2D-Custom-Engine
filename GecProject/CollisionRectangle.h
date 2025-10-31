@@ -1,5 +1,11 @@
 #pragma once
 
+enum class ColliderType
+{
+	Solid,
+	Trigger
+};
+
 // Used to represent an entities hitbox - for collisions
 class CollisionRectangle
 {
@@ -10,9 +16,10 @@ public:
 
 	int m_height{ 0 };
 	int m_width{ 0 };
+	ColliderType m_colliderType;
 
-	CollisionRectangle(float xPos = 0.f, float yPos = 0.f, int height = 0, int width = 0)
-		: m_xPos(xPos), m_yPos(yPos), m_height(height), m_width(width) {}
+	CollisionRectangle(float xPos = 0.f, float yPos = 0.f, int height = 0, int width = 0, ColliderType m_colliderType = ColliderType::Trigger)
+		: m_xPos(xPos), m_yPos(yPos), m_height(height), m_width(width), m_colliderType(m_colliderType) {}
 
 	bool intersection(const CollisionRectangle& other) const
 	{
@@ -22,6 +29,5 @@ public:
 			this->m_yPos > other.m_yPos + other.m_height) // Checks the top of this rectangle to the bottom of the other
 			return false;
 		return true;
-
 	}
 };
