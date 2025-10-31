@@ -3,11 +3,14 @@
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
+    // Adding entities to the entity vector, and setting up the animations for them
+	// Player
     auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("zombieWalk"));
     m_player = player.get();
     m_entities.push_back(std::move(player));
     m_inputManager.addListener(m_player);
 
+    // Zombie
     auto zombie = std::make_unique<Entity>(m_animationManager.getAnimation("zombieIdle"));
     m_zombie = zombie.get();
     m_entities.push_back(std::move(zombie));
