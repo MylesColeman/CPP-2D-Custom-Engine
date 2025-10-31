@@ -16,7 +16,6 @@ public:
 
 		m_hitbox.m_height = m_animation->spriteHeight;
 		m_hitbox.m_width = m_animation->spriteWidth;
-		m_hitbox.m_colliderType = ColliderType::Solid;
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes

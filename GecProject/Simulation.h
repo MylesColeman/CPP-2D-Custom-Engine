@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <map>
+#include <string>
 
 class Simulation
 {
@@ -19,7 +21,8 @@ public:
         return m_entities;
     }
 
-    std::vector<CollisionRectangle> m_collisionRects;
+    std::vector<CollisionRectangle> m_solidColliders;
+    std::map<std::string, CollisionRectangle> m_triggerColliders;
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;
