@@ -23,4 +23,6 @@ private:
 	sf::Clock m_frameClock;
 	int m_frameCount{ 0 };
 	float m_fps{ 0.0f };
+
+	sf::RectangleShape m_debugHitboxVisualiser;
 };
