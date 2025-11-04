@@ -66,4 +66,20 @@ void Simulation::update()
                 std::cout << "Player triggered event: " << triggerName << std::endl;
         }
     }
+
+	m_playerHitboxVisualiser.setPosition({ playerHitbox.m_xPos, playerHitbox.m_yPos });
+	m_playerHitboxVisualiser.setSize({ static_cast<float>(playerHitbox.m_width), static_cast<float>(playerHitbox.m_height) });
+	m_playerHitboxVisualiser.setFillColor(sf::Color(255, 0, 0, 100));
+
+    m_zombieHitboxVisualiser.setPosition({ zombieHitbox.m_xPos, zombieHitbox.m_yPos });
+    m_zombieHitboxVisualiser.setSize({ static_cast<float>(zombieHitbox.m_width), static_cast<float>(zombieHitbox.m_height) });
+    m_zombieHitboxVisualiser.setFillColor(sf::Color(0, 0, 255, 100));
+
+    for (auto& pair : m_triggerColliders)
+    {
+        const CollisionRectangle& colliderRect = pair.second;
+        m_triggerHitboxVisualiser.setPosition({ colliderRect.m_xPos, colliderRect.m_yPos });
+        m_triggerHitboxVisualiser.setSize({ static_cast<float>(colliderRect.m_width), static_cast<float>(colliderRect.m_height) });
+        m_triggerHitboxVisualiser.setFillColor(sf::Color(0, 255, 0, 100));
+	}
 }

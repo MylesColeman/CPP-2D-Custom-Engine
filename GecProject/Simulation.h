@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <SFML/Graphics.hpp> // Added for just for this test/debugging
 
 class Simulation
 {
@@ -23,6 +24,11 @@ public:
 
     std::vector<CollisionRectangle> m_solidColliders;
     std::map<std::string, CollisionRectangle> m_triggerColliders;
+
+    // Debugging hitbox visualisers
+    sf::RectangleShape m_playerHitboxVisualiser;
+    sf::RectangleShape m_zombieHitboxVisualiser;
+    sf::RectangleShape m_triggerHitboxVisualiser;
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;

@@ -87,6 +87,12 @@ void Graphics::render()
     for (const auto& entity : m_simulation.getEntities())
         m_window.draw(*entity);
 
+	// Debugging hitbox visualisers
+    m_window.draw(m_simulation.m_playerHitboxVisualiser);
+    m_window.draw(m_simulation.m_zombieHitboxVisualiser);
+    for (auto& pair : m_simulation.m_triggerColliders)
+        m_window.draw(m_simulation.m_triggerHitboxVisualiser);
+
     // UI needs drawing last
     ImGui::SFML::Render(m_window);
 
