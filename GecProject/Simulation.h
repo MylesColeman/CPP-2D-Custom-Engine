@@ -37,5 +37,4 @@ private:
 
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
-    Entity* m_zombie{ nullptr };
 };

@@ -19,7 +19,7 @@ void DefineGUI(float fps)
 
 // Sets up the window, animation manager, and the sprite animator for zombie
 Graphics::Graphics() : 
-    m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"),
+    m_window(sf::VideoMode({ 1280, 720 }), "GEC Start Project"),
 	m_simulation(m_textureManager)
 {
     // Set up ImGui (the UI library)

@@ -21,14 +21,14 @@ public:
     };
 
     // Entity constructor for a static, non-animated, entity
-    explicit Entity(sf::Texture* texture, const sf::IntRect& textureRect) :
-        sf::Sprite(*texture, textureRect)
+    explicit Entity(const StaticSprite& sprite) :
+        sf::Sprite(*sprite.texture, sprite.textureRect)
     {
 		m_animation = nullptr;
 		m_isAnimated = false;
 
-        m_hitbox.m_height = textureRect.size.y;
-        m_hitbox.m_width = textureRect.size.x;
+        m_hitbox.m_height = sprite.textureRect.size.y;
+        m_hitbox.m_width = sprite.textureRect.size.x;
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes
@@ -40,6 +40,7 @@ public:
         this->setTexture(*m_animation->texture, true);
         m_currentFrame = 0;
         m_animClock.restart();
+        m_isAnimated = true;
 
         // Calculates and sets the intRect for the first frame. Otherwise the entire spritesheet would be shown till it was set in update
         int intRectsYPos = m_currentFrame * m_animation->spriteHeight;
