@@ -22,6 +22,5 @@ public:
 			this->m_yPos > other.m_yPos + other.m_height) // Checks the top of this rectangle to the bottom of the other
 			return false;
 		return true;
-
 	}
 };

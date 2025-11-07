@@ -2,9 +2,13 @@
 #include "Entity.h"
 #include "PlayerEntity.h"
 #include "InputManager.h"
+#include "CollisionRectangle.h"
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <map>
+#include <string>
+#include <SFML/Graphics.hpp> // Added for just for this test/debugging
 
 class Simulation
 {
@@ -17,11 +21,20 @@ public:
     {
         return m_entities;
     }
+
+    std::vector<CollisionRectangle> m_solidColliders;
+    std::map<std::string, CollisionRectangle> m_triggerColliders;
+
+    // Debugging hitbox visualisers
+    sf::RectangleShape m_playerHitboxVisualiser;
+    sf::RectangleShape m_zombieHitboxVisualiser;
+    sf::RectangleShape m_triggerHitboxVisualiser;
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;
 
     std::vector<std::unique_ptr<Entity>> m_entities; // Scalable approach used for updating and rendering
+
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
     Entity* m_zombie{ nullptr };
