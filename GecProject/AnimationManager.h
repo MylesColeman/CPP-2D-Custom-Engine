@@ -29,12 +29,6 @@ public:
 	{
 		// Loading the sprite sheets
 		// Animations
-		// Zombie
-		configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
-		configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
-		configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
-		configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
-
 		// Player
 		configureAnimation("playerIdle", "Data/Textures/Player/skeleton_idle.png", 4, 0.7f);
 		configureAnimation("playerJump", "Data/Textures/Player/skeleton_jump.png", 7);
@@ -45,7 +39,7 @@ public:
 
 		// Statics
 		// World
-		configureStaticSprite("WalledFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 0,0 }, { 18,18 }));
+		configureStaticSprite("TopEdgelessFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 36, 18 }, { 18, 18 }));
 	}
 
 	// Assigns variables to the structure, so the animation can be used

@@ -17,7 +17,7 @@ void DefineGUI(float fps)
     ImGui::End();
 }
 
-// Sets up the window, animation manager, and the sprite animator for zombie
+// Sets up the window and the simulation
 Graphics::Graphics() :
     m_window(sf::VideoMode({ 1280, 720 }), "GEC Start Project"),
     m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
@@ -58,7 +58,7 @@ void Graphics::windowEvents()
     }
 }
 
-// Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
+// Handles the graphical updating of the simulation, which in turn handles the graphical updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 void Graphics::update()
 {
     // ImGui must be updated each frame
@@ -91,7 +91,6 @@ void Graphics::render()
         m_window.draw(*entity);
 
 	// Debugging hitbox visualisers
-    m_window.draw(m_simulation.m_playerHitboxVisualiser);
     for (auto& pair : m_simulation.m_triggerColliders)
         m_window.draw(m_simulation.m_triggerHitboxVisualiser);
 

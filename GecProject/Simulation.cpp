@@ -13,8 +13,16 @@ Simulation::Simulation(TextureManager& textureManager) :
 
     // Static Sprite
     // Floor
-	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("WalledFloor"));
-    floor->setPosition({ 200.f, 200.f });
+	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 162.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 18.f, 162.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 36.f, 162.f });
     m_entities.push_back(std::move(floor));
     
     // Creating collision rectangles
@@ -62,10 +70,6 @@ void Simulation::update()
                 std::cout << "Player triggered event: " << triggerName << std::endl;
         }
     }
-
-	m_playerHitboxVisualiser.setPosition({ playerHitbox.m_xPos, playerHitbox.m_yPos });
-	m_playerHitboxVisualiser.setSize({ static_cast<float>(playerHitbox.m_width), static_cast<float>(playerHitbox.m_height) });
-	m_playerHitboxVisualiser.setFillColor(sf::Color(255, 0, 0, 100));
 
     for (auto& pair : m_triggerColliders)
     {
