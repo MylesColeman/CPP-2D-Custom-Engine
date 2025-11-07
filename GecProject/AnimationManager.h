@@ -39,7 +39,7 @@ public:
 		configureAnimation("playerIdle", "Data/Textures/Player/skeleton_idle.png", 4, 0.7f);
 		configureAnimation("playerJump", "Data/Textures/Player/skeleton_jump.png", 7);
 		configureAnimation("playerJumpShot", "Data/Textures/Player/skeleton_jumpShot.png", 8);
-		configureAnimation("playerStandingShot", "Data/Textures/Player/skeleton_standingShot.png", 5);
+		configureAnimation("playerStandingShot", "Data/Textures/Player/skeleton_standingShot.png", 5, 0.2f);
 		configureAnimation("playerWalk", "Data/Textures/Player/skeleton_walk.png", 6);
 		configureAnimation("playerWalkShot", "Data/Textures/Player/skeleton_walkShot.png", 8);
 
