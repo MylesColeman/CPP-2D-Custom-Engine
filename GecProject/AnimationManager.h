@@ -29,11 +29,19 @@ public:
 	{
 		// Loading the sprite sheets
 		// Animations
-		// Zombie Animation Setup
+		// Zombie
 		configureAnimation("zombieIdle", "Data/Textures/MaleZombie/idle_combined.png", 15);
 		configureAnimation("zombieWalk", "Data/Textures/MaleZombie/walk_combined.png", 10);
 		configureAnimation("zombieAttack", "Data/Textures/MaleZombie/attack_combined.png", 8);
 		configureAnimation("zombieDeath", "Data/Textures/MaleZombie/dead_combined.png", 12);
+
+		// Player
+		configureAnimation("playerIdle", "Data/Textures/Player/skeleton_idle.png", 4, 0.7f);
+		configureAnimation("playerJump", "Data/Textures/Player/skeleton_jump.png", 7);
+		configureAnimation("playerJumpShot", "Data/Textures/Player/skeleton_jumpShot.png", 8);
+		configureAnimation("playerStandingShot", "Data/Textures/Player/skeleton_standingShot.png", 5);
+		configureAnimation("playerWalk", "Data/Textures/Player/skeleton_walk.png", 6);
+		configureAnimation("playerWalkShot", "Data/Textures/Player/skeleton_walkShot.png", 8);
 
 		// Statics
 		// World

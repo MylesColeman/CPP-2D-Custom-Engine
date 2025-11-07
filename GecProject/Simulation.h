@@ -27,7 +27,6 @@ public:
 
     // Debugging hitbox visualisers
     sf::RectangleShape m_playerHitboxVisualiser;
-    sf::RectangleShape m_zombieHitboxVisualiser;
     sf::RectangleShape m_triggerHitboxVisualiser;
 private:
     AnimationManager m_animationManager;

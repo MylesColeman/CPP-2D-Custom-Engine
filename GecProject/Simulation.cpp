@@ -5,10 +5,10 @@ Simulation::Simulation(TextureManager& textureManager) :
 {
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
-    auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("zombieWalk"));
+    auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("playerIdle"));
     m_player = player.get();
     m_entities.push_back(std::move(player));
-    m_player->setPosition({ 0.f, 0.f });
+    m_player->setPosition({ 50.f, 50.f });
     m_inputManager.addListener(m_player);
 
     // Static Sprite

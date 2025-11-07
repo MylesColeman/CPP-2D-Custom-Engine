@@ -14,6 +14,8 @@ private:
 	void render(); // The actual logic behind displaying the sprite to the window
 
 	sf::RenderWindow m_window;
+	sf::View m_gameView;
+
 	TextureManager m_textureManager; // Passed into the simulation to be used by the animation manager
 	Simulation m_simulation;
 

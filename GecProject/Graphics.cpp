@@ -18,10 +18,13 @@ void DefineGUI(float fps)
 }
 
 // Sets up the window, animation manager, and the sprite animator for zombie
-Graphics::Graphics() : 
+Graphics::Graphics() :
     m_window(sf::VideoMode({ 1280, 720 }), "GEC Start Project"),
+    m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
 	m_simulation(m_textureManager)
 {
+    m_window.setView(m_gameView);
+
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 
         std::cout << "ImGUI could not be loaded!" << std::endl;
@@ -78,7 +81,7 @@ void Graphics::update()
 void Graphics::render()
 {
     // Clear the window
-    m_window.clear();
+    m_window.clear(sf::Color(139, 142, 135));
 
     // The UI gets defined each time
     DefineGUI(m_fps);
@@ -89,7 +92,6 @@ void Graphics::render()
 
 	// Debugging hitbox visualisers
     m_window.draw(m_simulation.m_playerHitboxVisualiser);
-    m_window.draw(m_simulation.m_zombieHitboxVisualiser);
     for (auto& pair : m_simulation.m_triggerColliders)
         m_window.draw(m_simulation.m_triggerHitboxVisualiser);
 
