@@ -81,6 +81,9 @@ New Functionality
 
 - Separated simulation from graphics, through the simulation class
 	- This handles the updating of all entities and their collisions
+- Implemented containers to hold different types of colliders
+	- This allows for different collision logic between the type of collider, e.g. entity, trigger and, solid
+		- Solid colliders and entities inhibit player movement
 
 Code Additions
 --------------
@@ -88,16 +91,19 @@ Code Additions
 - Implemented the simulation class
 	- Moved all the updating of entities which was being done in the graphics class, to the simulation class
 		- As well as handling the collision logic
+			- Created a vector of solid colliders, and a map of trigger boxes
+				- Loop through all types of colliders checking for "intersections" with the player
 
 Tests
 -----
 
 - Ran the code to ensure all still works, as no code was added, just moved, this is sufficient - works as expected
+- Reimplemented the debug rectangles to help visualise the collision boxes - collisions work as expected
 
 Notes
 -----
 
 - Whilst the milestones are technically completed there are a few changes to help refine the project
+	- Change the maps to unordered maps for performance
 	- Improve the player's movement code
-	- Add collisions which inhibit movement
 - Decide upon and implement a game using this engine

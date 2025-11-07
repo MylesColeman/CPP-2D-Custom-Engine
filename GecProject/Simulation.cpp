@@ -42,10 +42,7 @@ void Simulation::update()
     for (const auto& entity : m_entities)
     {
         if (playerHitbox.intersection(entity->getHitbox()) && entity.get() != m_player)
-        {
-            std::cout << "Player collided with another entity!" << std::endl;
             m_player->setPosition(previousPlayerPos);
-		}
     }
 
     // Collisions with solid colliders
