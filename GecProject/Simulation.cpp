@@ -17,6 +17,14 @@ Simulation::Simulation(TextureManager& textureManager) :
     m_entities.push_back(std::move(zombie));
 	m_zombie->setPosition({ 600.f, 500.f });
 
+    // Static SET THIS UP AND UPLOAD TILESET
+    sf::Texture* worldTilemap = textureManager.getTexture(""); // FILL
+    sf::IntRect worldTilemapRect(); // FILL
+
+	auto floor = std::make_unique<Entity>(worldTilemap, worldTilemapRect);
+	floor->setPosition({ 200.f, 200.f });
+    m_entities.push_back(std::move(floor));
+
     // Creating collision rectangles
     // Event Trigger Test
     m_triggerColliders["TestTrigger"] = CollisionRectangle(0.f, 0.f, 50, 50);

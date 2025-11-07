@@ -8,14 +8,27 @@
 class Entity : public sf::Sprite
 {
 public:
-    // Default entity constructor, sets the animation to be used, and assigns the hitbox to the size of the sprite
+    // Entity constructor for an animated entity
     explicit Entity(const Animation& animation) : 
         sf::Sprite(*animation.texture) 
     {
 		this->setAnimation(animation);
 
+		m_isAnimated = true;
+
 		m_hitbox.m_height = m_animation->spriteHeight;
 		m_hitbox.m_width = m_animation->spriteWidth;
+    };
+
+    // Entity constructor for a static, non-animated, entity
+    explicit Entity(sf::Texture* texture, const sf::IntRect& textureRect) :
+        sf::Sprite(*texture, textureRect)
+    {
+		m_animation = nullptr;
+		m_isAnimated = false;
+
+        m_hitbox.m_height = textureRect.size.y;
+        m_hitbox.m_width = textureRect.size.x;
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes
@@ -37,7 +50,7 @@ public:
     virtual void update()
     {
 		// After the set time, updates to the next sprite - if there is an animation set
-        if (m_animation && m_animClock.getElapsedTime().asSeconds() > m_animation->timeBetweenFrames)
+        if (m_isAnimated && m_animation && m_animClock.getElapsedTime().asSeconds() > m_animation->timeBetweenFrames)
         {
             m_currentFrame++;
 
@@ -72,4 +85,6 @@ protected:
 private:
     sf::Clock m_animClock;
     int m_currentFrame{ 0 };
+
+    bool m_isAnimated{ false };
 };
