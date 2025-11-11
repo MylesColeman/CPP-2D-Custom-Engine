@@ -23,7 +23,8 @@ Graphics::Graphics() :
     m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
 	m_simulation(m_textureManager)
 {
-    m_window.setView(m_gameView);
+    m_window.setVerticalSyncEnabled(true); // Enables VSync to limit FPS
+    m_window.setView(m_gameView); // Sets the game view to a more readable resolution
 
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 

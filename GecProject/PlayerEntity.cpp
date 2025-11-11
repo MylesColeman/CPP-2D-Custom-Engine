@@ -14,17 +14,14 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 	{
 		switch (action)
 		{
-		case Actions::eMoveUp:
-			m_velocity.y = -m_speed; // Moves up by setting a negative y velocity
-			break;
 		case Actions::eMoveRight:
 			m_velocity.x = m_speed; // Moves right by setting a positive x velocity
 			break;
-		case Actions::eMoveDown:
-			m_velocity.y = m_speed; // Moves down by setting a positive y velocity
-			break;
 		case Actions::eMoveLeft:
 			m_velocity.x = -m_speed; // Moves left by setting a negative x velocity
+			break;
+		case Actions::eJump:
+			// Jump logic would go here
 			break;
 		default:
 			break;
