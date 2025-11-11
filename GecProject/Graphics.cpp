@@ -36,7 +36,7 @@ void Graphics::display()
 	m_deltaClock.restart();
     while (m_window.isOpen())
     {
-        float deltaTime = m_deltaClock.restart().asSeconds();
+        float deltaTime = m_deltaClock.restart().asSeconds(); // Calculates the delta time for each loop
         windowEvents();
         update(deltaTime);
         render();
