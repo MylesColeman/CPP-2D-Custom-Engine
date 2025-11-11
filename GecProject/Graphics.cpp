@@ -33,10 +33,12 @@ Graphics::Graphics() :
 // Will be called in main, running all the graphics/display logic
 void Graphics::display()
 {
+	m_deltaClock.restart();
     while (m_window.isOpen())
     {
+        float deltaTime = m_deltaClock.restart().asSeconds();
         windowEvents();
-        update();
+        update(deltaTime);
         render();
     }
 
@@ -59,12 +61,12 @@ void Graphics::windowEvents()
 }
 
 // Handles the graphical updating of the simulation, which in turn handles the graphical updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
-void Graphics::update()
+void Graphics::update(float deltaTime)
 {
     // ImGui must be updated each frame
     ImGui::SFML::Update(m_window, m_uiDeltaClock.restart());
 
-	m_simulation.update();
+	m_simulation.update(deltaTime);
 
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop

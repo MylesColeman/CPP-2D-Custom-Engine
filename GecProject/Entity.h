@@ -48,7 +48,7 @@ public:
     }
 
 	// Handles the updating of the entity, it is virtual so derived classes can extend it. But it handles animation by default
-    virtual void update()
+    virtual void update(float deltaTime)
     {
 		// After the set time, updates to the next sprite - if there is an animation set
         if (m_isAnimated && m_animation && m_animClock.getElapsedTime().asSeconds() > m_animation->timeBetweenFrames)
@@ -70,7 +70,7 @@ public:
             m_animClock.restart();
         }
 
-		this->move(m_velocity); // Moves the entity based on its velocity
+		this->move(m_velocity * deltaTime); // Moves the entity based on its velocity
 
 		// Updates the hitbox position ensuring it matches the entity's position - follows
 		m_hitbox.m_xPos = this->getPosition().x;

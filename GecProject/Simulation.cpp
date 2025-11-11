@@ -31,7 +31,7 @@ Simulation::Simulation(TextureManager& textureManager) :
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
-void Simulation::update()
+void Simulation::update(float deltaTime)
 {
     m_inputManager.update();
 
@@ -39,7 +39,7 @@ void Simulation::update()
 
     // Loops through all entities and updates them
     for (auto& entity : m_entities)
-        entity->update();
+        entity->update(deltaTime);
 
     // Sets up and updates the hitboxes
     const CollisionRectangle& playerHitbox = m_player->getHitbox();

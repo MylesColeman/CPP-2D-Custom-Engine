@@ -14,7 +14,7 @@ class Simulation
 {
 public:
     Simulation(TextureManager& textureManager);
-    void update(); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
+    void update(float deltaTime); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
     // A getter function for the entities for use in the graphics (for rendering)
     const std::vector<std::unique_ptr<Entity>>& getEntities() const

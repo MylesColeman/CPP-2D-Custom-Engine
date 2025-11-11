@@ -10,7 +10,7 @@ public:
 	void display(); // Will be called in main, running all the graphics/display logic
 private:
 	void windowEvents(); // Handles the windows events/interactions, movement, editing and closing
-	void update(); // Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
+	void update(float deltaTime); // Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 	void render(); // The actual logic behind displaying the sprite to the window
 
 	sf::RenderWindow m_window;
@@ -20,6 +20,7 @@ private:
 	Simulation m_simulation;
 
 	sf::Clock m_uiDeltaClock; // Used by ImGui for updating
+	sf::Clock m_deltaClock; // Used for calculating delta time between frames
 
 	// FPS counter variables
 	sf::Clock m_frameClock;
