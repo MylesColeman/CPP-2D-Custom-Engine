@@ -14,19 +14,27 @@ Simulation::Simulation(TextureManager& textureManager) :
     // Static Sprite
     // Floor
 	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 0.f, 162.f });
+    floor->setPosition({ 0.f, 126.f });
     m_entities.push_back(std::move(floor));
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 18.f, 162.f });
+    floor->setPosition({ 18.f, 126.f });
     m_entities.push_back(std::move(floor));
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 36.f, 162.f });
+    floor->setPosition({ 36.f, 126.f });
     m_entities.push_back(std::move(floor));
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 0.f, 144.f });
+    floor->setPosition({ 54.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 108.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 54.f, 144.f });
     m_entities.push_back(std::move(floor));
     
     // Creating collision rectangles
@@ -48,16 +56,29 @@ void Simulation::update(float deltaTime)
 
     // Collision detection
     // Collisions between entities
+    m_player->setIsGrounded(false); // Resets to false - so that gravity can continue
     for (const auto& entity : m_entities)
     {
-        if (playerHitbox.intersection(entity->getHitbox()) && entity.get() != m_player)
+        const CollisionRectangle& entityHitbox = entity->getHitbox();
+        if (playerHitbox.intersection(entityHitbox) && entity.get() != m_player)
         {
+            // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
             if (m_player->getVelocity().y > 0)
             {
-                m_player->setYVelocity(0.f);
                 m_player->setIsGrounded(true);
+                m_player->setYVelocity(0.f);
+                
+                m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height - 0.1f });
+            }
 
-                m_player->setPosition({ m_player->getHitbox().m_xPos, entity->getHitbox().m_yPos - m_player->getHitbox().m_height });
+            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
+
+            if (playerCentreY > entityHitbox.m_yPos && playerCentreY < (entityHitbox.m_yPos + entityHitbox.m_height))
+            {
+                if (m_player->getVelocity().x > 0) // Moving right collision
+                    m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
+                else if (m_player->getVelocity().x < 0) // Moving left collision
+                    m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, playerHitbox.m_yPos });
             }
         }
     }
@@ -65,10 +86,8 @@ void Simulation::update(float deltaTime)
     // Collisions with solid colliders
     for (const auto& solidCollider : m_solidColliders)
     {
-        if (playerHitbox.intersection(solidCollider))
-        {
-
-        }
+        /*if (playerHitbox.intersection(solidCollider))
+            m_player->setPosition(previousPlayerPos);*/ //DO LATER -------------------------------------
     }
 
     // Collisions with trigger boxes
