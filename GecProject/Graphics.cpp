@@ -39,6 +39,14 @@ void Graphics::display()
     {
         float deltaTime = m_deltaClock.restart().asSeconds(); // Calculates the delta time for each loop
         windowEvents();
+
+        m_accumulator += deltaTime;
+        while (m_accumulator >= m_fixedTimestep)
+        {
+            m_simulation.update(m_fixedTimestep);
+            m_accumulator -= m_fixedTimestep;
+        }
+
         update(deltaTime);
         render();
     }
@@ -66,8 +74,6 @@ void Graphics::update(float deltaTime)
 {
     // ImGui must be updated each frame
     ImGui::SFML::Update(m_window, m_uiDeltaClock.restart());
-
-	m_simulation.update(deltaTime);
 
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop

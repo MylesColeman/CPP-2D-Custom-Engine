@@ -8,7 +8,7 @@ Simulation::Simulation(TextureManager& textureManager) :
     auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("playerIdle"));
     m_player = player.get();
     m_entities.push_back(std::move(player));
-    m_player->setPosition({ 50.f, 50.f });
+    m_player->setPosition({ 25.f, 50.f });
     m_inputManager.addListener(m_player);
 
     // Static Sprite
@@ -24,6 +24,10 @@ Simulation::Simulation(TextureManager& textureManager) :
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
     floor->setPosition({ 36.f, 162.f });
     m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 144.f });
+    m_entities.push_back(std::move(floor));
     
     // Creating collision rectangles
     // Event Trigger Test
@@ -34,8 +38,6 @@ Simulation::Simulation(TextureManager& textureManager) :
 void Simulation::update(float deltaTime)
 {
     m_inputManager.update();
-
-    sf::Vector2f previousPlayerPos = m_player->getPosition();
 
     // Loops through all entities and updates them
     for (auto& entity : m_entities)
@@ -50,12 +52,12 @@ void Simulation::update(float deltaTime)
     {
         if (playerHitbox.intersection(entity->getHitbox()) && entity.get() != m_player)
         {
-            m_player->setPosition(previousPlayerPos);
-
             if (m_player->getVelocity().y > 0)
             {
-				m_player->setYVelocity(0.f);
-                // Check for whether the player is grounded
+                m_player->setYVelocity(0.f);
+                m_player->setIsGrounded(true);
+
+                m_player->setPosition({ m_player->getHitbox().m_xPos, entity->getHitbox().m_yPos - m_player->getHitbox().m_height });
             }
         }
     }
@@ -64,7 +66,9 @@ void Simulation::update(float deltaTime)
     for (const auto& solidCollider : m_solidColliders)
     {
         if (playerHitbox.intersection(solidCollider))
-            m_player->setPosition(previousPlayerPos);
+        {
+
+        }
     }
 
     // Collisions with trigger boxes
