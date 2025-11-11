@@ -49,7 +49,15 @@ void Simulation::update(float deltaTime)
     for (const auto& entity : m_entities)
     {
         if (playerHitbox.intersection(entity->getHitbox()) && entity.get() != m_player)
+        {
             m_player->setPosition(previousPlayerPos);
+
+            if (m_player->getVelocity().y > 0)
+            {
+				m_player->setYVelocity(0.f);
+                // Check for whether the player is grounded
+            }
+        }
     }
 
     // Collisions with solid colliders

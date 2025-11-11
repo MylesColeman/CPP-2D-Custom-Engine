@@ -3,12 +3,15 @@
 
 void PlayerEntity::update(float deltaTime)
 {
+	m_grounded = false;
+	m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
+
 	Entity::update(deltaTime); // Calls the base class update to handle animation and movement
 }
 
 void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 {
-	m_velocity = { 0.0f, 0.0f }; // Resets the velocity to zero each frame, so the player stops moving when no keys are pressed
+	m_velocity.x = 0.f; // Resets the velocity to zero each frame, so the player stops moving when no keys are pressed
 
 	for (const Actions& action : actions) // Loops through all actions to handle multiple inputs
 	{
