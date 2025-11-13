@@ -7,7 +7,6 @@ void PlayerEntity::update(float deltaTime)
 		m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
 
 	Entity::update(deltaTime); // Calls the base class update to handle animation and movement
-	//std::cout << m_velocity.y << std::endl;
 }
 
 void PlayerEntity::handleInput(const std::vector<Actions>& actions)
