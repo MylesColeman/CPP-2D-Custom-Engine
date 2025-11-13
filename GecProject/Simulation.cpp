@@ -83,8 +83,24 @@ void Simulation::update(float deltaTime)
     // Collisions with solid colliders
     for (const auto& solidCollider : m_solidColliders)
     {
-        /*if (playerHitbox.intersection(solidCollider))
-            m_player->setPosition(previousPlayerPos);*/ //DO LATER -------------------------------------
+        if (playerHitbox.intersection(solidCollider))
+        {
+            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
+            
+            if (m_player->getVelocity().y >= 0 && playerCentreY < solidCollider.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
+            {
+                m_player->setIsGrounded(true);
+                m_player->setYVelocity(0.f);
+                m_player->setPosition({ playerHitbox.m_xPos, solidCollider.m_yPos - playerHitbox.m_height });
+            }
+            else if (playerCentreY > solidCollider.m_yPos && playerCentreY < (solidCollider.m_yPos + solidCollider.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
+            {
+                if (m_player->getVelocity().x > 0) // Moving right collision
+                    m_player->setPosition({ solidCollider.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
+                else if (m_player->getVelocity().x < 0) // Moving left collision
+                    m_player->setPosition({ solidCollider.m_xPos + solidCollider.m_width, playerHitbox.m_yPos });
+            }
+        }
     }
 
     // Collisions with trigger boxes
