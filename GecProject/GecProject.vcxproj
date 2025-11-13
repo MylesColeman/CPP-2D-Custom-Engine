@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Collectable.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="IMGUI\imgui-SFML.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="Collectable.h" />
     <ClInclude Include="ExternalHeaders.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="InputManager.h" />

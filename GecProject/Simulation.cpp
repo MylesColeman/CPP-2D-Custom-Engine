@@ -11,6 +11,10 @@ Simulation::Simulation(TextureManager& textureManager) :
     m_player->setPosition({ 25.f, 50.f });
     m_inputManager.addListener(m_player);
 
+    auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
+    collectable->setPosition({ 0.f, 90.f });
+    m_entities.push_back(std::move(collectable));
+
     // Static Sprite
     // Floor
 	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
@@ -62,6 +66,14 @@ void Simulation::update(float deltaTime)
         const CollisionRectangle& entityHitbox = entity->getHitbox();
         if (playerHitbox.intersection(entityHitbox) && entity.get() != m_player)
         {
+            if (entity->getType() == EntityType::Collectable)
+            {
+                m_score++;
+                std::cout << m_score << std::endl;
+                entity->destroy();
+                continue;
+            }
+
             float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
             
             if (m_player->getVelocity().y >= 0 && playerCentreY < entityHitbox.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
@@ -79,6 +91,9 @@ void Simulation::update(float deltaTime)
             }
         }
     }
+
+    // Deleting marked entities
+    m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
 
     // Collisions with solid colliders
     for (const auto& solidCollider : m_solidColliders)

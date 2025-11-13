@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "PlayerEntity.h"
+#include "Collectable.h"
 #include "InputManager.h"
 #include "CollisionRectangle.h"
 #include <vector>
@@ -35,4 +36,6 @@ private:
 
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
+
+    int m_score{ 0 };
 };
