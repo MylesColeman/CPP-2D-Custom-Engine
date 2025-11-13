@@ -56,9 +56,10 @@ void Simulation::update(float deltaTime)
 
     // Collision detection
     // Collisions between entities
-    m_player->setIsGrounded(false); // Resets to false - so that gravity can continue
+    m_player->setIsGrounded(false); // Resets to false
     for (const auto& entity : m_entities)
     {
+        std::cout << "Before: " << playerHitbox.m_xPos << ", " << playerHitbox.m_yPos << std::endl;
         const CollisionRectangle& entityHitbox = entity->getHitbox();
         if (playerHitbox.intersection(entityHitbox) && entity.get() != m_player)
         {
@@ -68,7 +69,7 @@ void Simulation::update(float deltaTime)
                 m_player->setIsGrounded(true);
                 m_player->setYVelocity(0.f);
                 
-                m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height - 0.1f });
+                m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height });
             }
 
             float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
@@ -78,7 +79,10 @@ void Simulation::update(float deltaTime)
                 if (m_player->getVelocity().x > 0) // Moving right collision
                     m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
                 else if (m_player->getVelocity().x < 0) // Moving left collision
+                {
                     m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, playerHitbox.m_yPos });
+                    std::cout << "After: " << playerHitbox.m_xPos << ", " << playerHitbox.m_yPos << std::endl;
+                }
             }
         }
     }
