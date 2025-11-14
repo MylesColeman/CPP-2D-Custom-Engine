@@ -73,7 +73,8 @@ void Simulation::update(float deltaTime)
                 entity->destroy();
                 continue;
             }
-            // Need to implement ceiling collisions
+
+            
             float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
             
             if (m_player->getVelocity().y >= 0 && playerCentreY < entityHitbox.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
@@ -81,6 +82,11 @@ void Simulation::update(float deltaTime)
                 m_player->setIsGrounded(true);
                 m_player->setYVelocity(0.f);
                 m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height });
+            }
+            else if (m_player->getVelocity().y < 0 && playerCentreY > entityHitbox.m_yPos + entityHitbox.m_height) // Checks if the player is moving upwards and collided
+            {
+				m_player->setYVelocity(0.f);
+				m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos + entityHitbox.m_height });
             }
             else if (playerCentreY > entityHitbox.m_yPos && playerCentreY < (entityHitbox.m_yPos + entityHitbox.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
             {
