@@ -60,53 +60,53 @@ void Simulation::update(float deltaTime)
     // Horizontal Updating
     m_player->move({ m_player->getVelocity().x * deltaTime, 0.f }); // Moves the player horizontally based on their velocity
 
- //   // Horizontal Collision
- //   for (const auto& entity : m_entities)
- //   {
- //       // Skips self-collision
- //       if (entity.get() == m_player) 
-	//		continue;
+    // Horizontal Collision
+    for (const auto& entity : m_entities)
+    {
+        // Skips self-collision
+        if (entity.get() == m_player) 
+			continue;
 
-	//	const CollisionRectangle& entityHitbox = entity->getHitbox();
+		const CollisionRectangle& entityHitbox = entity->getHitbox();
 
- //       if (m_player->getHitbox().intersection(entityHitbox))
- //       {
- //           if (m_player->getVelocity().x > 0)
- //               m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, m_player->getPosition().y });
- //           else if (m_player->getVelocity().x < 0)
-	//			m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
- //       }
- //   }
+        if (m_player->getHitbox().intersection(entityHitbox))
+        {
+            if (m_player->getVelocity().x > 0)
+                m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, m_player->getPosition().y });
+            else if (m_player->getVelocity().x < 0)
+				m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
+        }
+    }
 
- //   // Vertical Updating
+    // Vertical Updating
     m_player->move({ 0.f, m_player->getVelocity().y * deltaTime });
- //   m_player->setIsGrounded(false); // Resets grounded state each loop
+    m_player->setIsGrounded(false); // Resets grounded state each loop
 
-	//// Vertical Collision
- //   for (const auto& entity : m_entities)
- //   {
- //       // Skips self-collision
- //       if (entity.get() == m_player)
- //           continue;
+	// Vertical Collision
+    for (const auto& entity : m_entities)
+    {
+        // Skips self-collision
+        if (entity.get() == m_player)
+            continue;
 
-	//	const CollisionRectangle& entityHitbox = entity->getHitbox();
+		const CollisionRectangle& entityHitbox = entity->getHitbox();
 
- //       if (m_player->getHitbox().intersection(entityHitbox))
- //       {
- //           if (m_player->getVelocity().y > 0)
- //           {
- //               m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos - playerHitbox.m_height});
- //               m_player->setIsGrounded(true);
- //               m_player->setYVelocity(0.f);
- //               
- //           }
- //           else if (m_player->getVelocity().y < 0)
- //           {
- //               m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos + entityHitbox.m_height});
- //               m_player->setYVelocity(0.f);                
- //           }
- //       }
- //   }
+        if (m_player->getHitbox().intersection(entityHitbox))
+        {
+            if (m_player->getVelocity().y > 0)
+            {
+                m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos - playerHitbox.m_height});
+                m_player->setIsGrounded(true);
+                m_player->setYVelocity(0.f);
+                
+            }
+            else if (m_player->getVelocity().y < 0)
+            {
+                m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos + entityHitbox.m_height});
+                m_player->setYVelocity(0.f);                
+            }
+        }
+    }
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
