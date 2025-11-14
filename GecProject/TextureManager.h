@@ -26,5 +26,5 @@ public:
 		return &m_textures.at(filePath); // Returns the texture, either if already loaded, or just loaded
 	}
 private:
-	std::map<std::string, sf::Texture> m_textures;
+	std::unordered_map<std::string, sf::Texture> m_textures;
 };

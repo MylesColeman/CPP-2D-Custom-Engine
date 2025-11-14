@@ -24,7 +24,7 @@ public:
     }
 
     std::vector<CollisionRectangle> m_solidColliders;
-    std::map<std::string, CollisionRectangle> m_triggerColliders;
+    std::unordered_map<std::string, CollisionRectangle> m_triggerColliders;
 
     // Debugging hitbox visualisers
     sf::RectangleShape m_triggerHitboxVisualiser;
