@@ -55,86 +55,61 @@ void Simulation::update(float deltaTime)
     for (auto& entity : m_entities)
         entity->update(deltaTime);
 
-    // Sets up and updates the hitboxes
-    const CollisionRectangle& playerHitbox = m_player->getHitbox();
+    const CollisionRectangle& playerHitbox = m_player->getHitbox(); // Sets up and updates the hitbox
 
-    // Collision detection
-    // Collisions between entities
-    m_player->setIsGrounded(false); // Resets to false
-    for (const auto& entity : m_entities)
-    {
-        const CollisionRectangle& entityHitbox = entity->getHitbox();
-        if (playerHitbox.intersection(entityHitbox) && entity.get() != m_player)
-        {
-            if (entity->getType() == EntityType::Collectable)
-            {
-                m_score++;
-                std::cout << m_score << std::endl;
-                entity->destroy();
-                continue;
-            }
+    // Horizontal Updating
+    m_player->move({ m_player->getVelocity().x * deltaTime, 0.f }); // Moves the player horizontally based on their velocity
 
-            
-            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
-            
-            if (m_player->getVelocity().y >= 0 && playerCentreY < entityHitbox.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
-            {
-                m_player->setIsGrounded(true);
-                m_player->setYVelocity(0.f);
-                m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height });
-            }
-            else if (m_player->getVelocity().y < 0 && playerCentreY > entityHitbox.m_yPos + entityHitbox.m_height) // Checks if the player is moving upwards and collided
-            {
-				m_player->setYVelocity(0.f);
-				m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos + entityHitbox.m_height });
-            }
-            else if (playerCentreY > entityHitbox.m_yPos && playerCentreY < (entityHitbox.m_yPos + entityHitbox.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
-            {
-                if (m_player->getVelocity().x > 0) // Moving right collision
-                    m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
-                else if (m_player->getVelocity().x < 0) // Moving left collision
-                    m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, playerHitbox.m_yPos });
-            }
-        }
-    }
+ //   // Horizontal Collision
+ //   for (const auto& entity : m_entities)
+ //   {
+ //       // Skips self-collision
+ //       if (entity.get() == m_player) 
+	//		continue;
+
+	//	const CollisionRectangle& entityHitbox = entity->getHitbox();
+
+ //       if (m_player->getHitbox().intersection(entityHitbox))
+ //       {
+ //           if (m_player->getVelocity().x > 0)
+ //               m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, m_player->getPosition().y });
+ //           else if (m_player->getVelocity().x < 0)
+	//			m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
+ //       }
+ //   }
+
+ //   // Vertical Updating
+    m_player->move({ 0.f, m_player->getVelocity().y * deltaTime });
+ //   m_player->setIsGrounded(false); // Resets grounded state each loop
+
+	//// Vertical Collision
+ //   for (const auto& entity : m_entities)
+ //   {
+ //       // Skips self-collision
+ //       if (entity.get() == m_player)
+ //           continue;
+
+	//	const CollisionRectangle& entityHitbox = entity->getHitbox();
+
+ //       if (m_player->getHitbox().intersection(entityHitbox))
+ //       {
+ //           if (m_player->getVelocity().y > 0)
+ //           {
+ //               m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos - playerHitbox.m_height});
+ //               m_player->setIsGrounded(true);
+ //               m_player->setYVelocity(0.f);
+ //               
+ //           }
+ //           else if (m_player->getVelocity().y < 0)
+ //           {
+ //               m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos + entityHitbox.m_height});
+ //               m_player->setYVelocity(0.f);                
+ //           }
+ //       }
+ //   }
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
-
-    // Collisions with solid colliders
-    for (const auto& solidCollider : m_solidColliders)
-    {
-        if (playerHitbox.intersection(solidCollider))
-        {
-            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
-            
-            if (m_player->getVelocity().y >= 0 && playerCentreY < solidCollider.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
-            {
-                m_player->setIsGrounded(true);
-                m_player->setYVelocity(0.f);
-                m_player->setPosition({ playerHitbox.m_xPos, solidCollider.m_yPos - playerHitbox.m_height });
-            }
-            else if (playerCentreY > solidCollider.m_yPos && playerCentreY < (solidCollider.m_yPos + solidCollider.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
-            {
-                if (m_player->getVelocity().x > 0) // Moving right collision
-                    m_player->setPosition({ solidCollider.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
-                else if (m_player->getVelocity().x < 0) // Moving left collision
-                    m_player->setPosition({ solidCollider.m_xPos + solidCollider.m_width, playerHitbox.m_yPos });
-            }
-        }
-    }
-
-    // Collisions with trigger boxes
-    for (const auto& pair : m_triggerColliders)
-    {
-        const std::string& triggerName = pair.first;
-        const CollisionRectangle& colliderRect = pair.second;
-        if (playerHitbox.intersection(colliderRect))
-        {
-			if (triggerName == "TestTrigger")
-                std::cout << "Player triggered event: " << triggerName << std::endl;
-        }
-    }
 
     // Trigger collider visualiser
     for (auto& pair : m_triggerColliders)

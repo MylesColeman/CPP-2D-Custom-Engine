@@ -77,8 +77,6 @@ public:
             m_animClock.restart();
         }
 
-		this->move(m_velocity * deltaTime); // Moves the entity based on its velocity
-
 		// Updates the hitbox position ensuring it matches the entity's position - follows
 		m_hitbox.m_xPos = this->getPosition().x;
 		m_hitbox.m_yPos = this->getPosition().y;
