@@ -73,7 +73,7 @@ void Simulation::update(float deltaTime)
                 entity->destroy();
                 continue;
             }
-
+            // Need to implement ceiling collisions
             float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
             
             if (m_player->getVelocity().y >= 0 && playerCentreY < entityHitbox.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity

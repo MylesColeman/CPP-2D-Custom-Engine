@@ -84,6 +84,13 @@ New Functionality
 - Implemented containers to hold different types of colliders
 	- This allows for different collision logic between the type of collider, e.g. entity, trigger and, solid
 		- Solid colliders and entities inhibit player movement
+- Improved physics handling, through a fixed timestep
+- Enabled VSync for smoother gameplay
+- Player movement speed is no longer tied to the FPS (Delta Time)
+	- Added gravity for the player
+		- Improved the collision handling to properly work with gravity 
+- Added a collectable entity
+	- Collisions increase the total score
 
 Code Additions
 --------------
@@ -93,17 +100,28 @@ Code Additions
 		- As well as handling the collision logic
 			- Created a vector of solid colliders, and a map of trigger boxes
 				- Loop through all types of colliders checking for "intersections" with the player
+- Added an enum class to the base entity which helps define what type of entity it is - useful for collisions
+- Calculated delta time for use by the player, so their movement is more consistent
+- Added all simulation/physics logic into a fixed time step with an accumulator, for consistency
+- Multiplying the player's y velocity by gravity, so they fall
+- Changed the collision logic
+	- Now works with gravity, detecting which direction collisions come from
+	- Can separate which type of entity is being collided with (base entity, player, collectable etc)
+- Enabled VSync for the window, so that gameplay is smoother
 
 Tests
 -----
 
 - Ran the code to ensure all still works, as no code was added, just moved, this is sufficient - works as expected
 - Reimplemented the debug rectangles to help visualise the collision boxes - collisions work as expected
+	- Tested collisions from all implemented angles to ensure it works - it does bar from some inconsistencies with falling into a wall, 
+	  or falling whilst holding into the ground causing you to sink into the floor slightly
+- Tested player movement through triggers and with collectables to ensure performance isn't hindered and that they work - works perfectly
 
 Notes
 -----
 
 - Whilst the milestones are technically completed there are a few changes to help refine the project
 	- Change the maps to unordered maps for performance
-	- Improve the player's movement code
-- Decide upon and implement a game using this engine
+- Fix bugs with collision logic & implement ceiling collisions
+- Implement a game using this engine
