@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "PlayerEntity.h"
+#include "Collectable.h"
 #include "InputManager.h"
 #include "CollisionRectangle.h"
 #include <vector>
@@ -14,7 +15,7 @@ class Simulation
 {
 public:
     Simulation(TextureManager& textureManager);
-    void update(); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
+    void update(float deltaTime); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
     // A getter function for the entities for use in the graphics (for rendering)
     const std::vector<std::unique_ptr<Entity>>& getEntities() const
@@ -26,8 +27,6 @@ public:
     std::map<std::string, CollisionRectangle> m_triggerColliders;
 
     // Debugging hitbox visualisers
-    sf::RectangleShape m_playerHitboxVisualiser;
-    sf::RectangleShape m_zombieHitboxVisualiser;
     sf::RectangleShape m_triggerHitboxVisualiser;
 private:
     AnimationManager m_animationManager;
@@ -37,5 +36,6 @@ private:
 
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
-    Entity* m_zombie{ nullptr };
+
+    int m_score{ 0 };
 };

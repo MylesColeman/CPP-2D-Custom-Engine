@@ -5,10 +5,9 @@
 enum class Actions
 {
 	eNone,
-	eMoveUp,
 	eMoveRight,
-	eMoveDown,
-	eMoveLeft
+	eMoveLeft,
+	eJump
 };
 
 class IReceivesInput

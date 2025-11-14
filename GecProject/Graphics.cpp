@@ -17,11 +17,15 @@ void DefineGUI(float fps)
     ImGui::End();
 }
 
-// Sets up the window, animation manager, and the sprite animator for zombie
-Graphics::Graphics() : 
-    m_window(sf::VideoMode({ 800, 600 }), "GEC Start Project"),
+// Sets up the window and the simulation
+Graphics::Graphics() :
+    m_window(sf::VideoMode({ 1280, 720 }), "GEC Start Project"),
+    m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
 	m_simulation(m_textureManager)
 {
+    m_window.setVerticalSyncEnabled(true); // Enables VSync to limit FPS
+    m_window.setView(m_gameView); // Sets the game view to a more readable resolution
+
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 
         std::cout << "ImGUI could not be loaded!" << std::endl;
@@ -30,10 +34,20 @@ Graphics::Graphics() :
 // Will be called in main, running all the graphics/display logic
 void Graphics::display()
 {
+	m_deltaClock.restart();
     while (m_window.isOpen())
     {
+        float deltaTime = m_deltaClock.restart().asSeconds(); // Calculates the delta time for each loop
         windowEvents();
-        update();
+
+        m_accumulator += deltaTime;
+        while (m_accumulator >= m_fixedTimestep)
+        {
+            m_simulation.update(m_fixedTimestep);
+            m_accumulator -= m_fixedTimestep;
+        }
+
+        update(deltaTime);
         render();
     }
 
@@ -55,13 +69,11 @@ void Graphics::windowEvents()
     }
 }
 
-// Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
-void Graphics::update()
+// Handles the graphical updating of the simulation, which in turn handles the graphical updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
+void Graphics::update(float deltaTime)
 {
     // ImGui must be updated each frame
     ImGui::SFML::Update(m_window, m_uiDeltaClock.restart());
-
-	m_simulation.update();
 
     // FPS Calculation
     m_frameCount++; // Increments the frame count each loop of the game loop
@@ -78,7 +90,7 @@ void Graphics::update()
 void Graphics::render()
 {
     // Clear the window
-    m_window.clear();
+    m_window.clear(sf::Color(139, 142, 135));
 
     // The UI gets defined each time
     DefineGUI(m_fps);
@@ -88,8 +100,6 @@ void Graphics::render()
         m_window.draw(*entity);
 
 	// Debugging hitbox visualisers
-    m_window.draw(m_simulation.m_playerHitboxVisualiser);
-    m_window.draw(m_simulation.m_zombieHitboxVisualiser);
     for (auto& pair : m_simulation.m_triggerColliders)
         m_window.draw(m_simulation.m_triggerHitboxVisualiser);
 

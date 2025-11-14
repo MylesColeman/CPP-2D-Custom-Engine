@@ -5,51 +5,117 @@ Simulation::Simulation(TextureManager& textureManager) :
 {
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
-    auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("zombieWalk"));
+    auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("playerIdle"));
     m_player = player.get();
     m_entities.push_back(std::move(player));
-    m_player->setPosition({ 0.f, 0.f });
+    m_player->setPosition({ 25.f, 50.f });
     m_inputManager.addListener(m_player);
 
-    // Zombie
-    auto zombie = std::make_unique<Entity>(m_animationManager.getAnimation("zombieIdle"));
-    m_zombie = zombie.get();
-    m_entities.push_back(std::move(zombie));
-	m_zombie->setPosition({ 600.f, 500.f });
+    auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
+    collectable->setPosition({ 0.f, 90.f });
+    m_entities.push_back(std::move(collectable));
 
+    // Static Sprite
+    // Floor
+	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 18.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 36.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 54.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 108.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 54.f, 144.f });
+    m_entities.push_back(std::move(floor));
+    
     // Creating collision rectangles
     // Event Trigger Test
     m_triggerColliders["TestTrigger"] = CollisionRectangle(0.f, 0.f, 50, 50);
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
-void Simulation::update()
+void Simulation::update(float deltaTime)
 {
     m_inputManager.update();
 
-    sf::Vector2f previousPlayerPos = m_player->getPosition();
-
     // Loops through all entities and updates them
     for (auto& entity : m_entities)
-        entity->update();
+        entity->update(deltaTime);
 
     // Sets up and updates the hitboxes
     const CollisionRectangle& playerHitbox = m_player->getHitbox();
-    const CollisionRectangle& zombieHitbox = m_zombie->getHitbox();
 
     // Collision detection
     // Collisions between entities
+    m_player->setIsGrounded(false); // Resets to false
     for (const auto& entity : m_entities)
     {
-        if (playerHitbox.intersection(entity->getHitbox()) && entity.get() != m_player)
-            m_player->setPosition(previousPlayerPos);
+        const CollisionRectangle& entityHitbox = entity->getHitbox();
+        if (playerHitbox.intersection(entityHitbox) && entity.get() != m_player)
+        {
+            if (entity->getType() == EntityType::Collectable)
+            {
+                m_score++;
+                std::cout << m_score << std::endl;
+                entity->destroy();
+                continue;
+            }
+            // Need to implement ceiling collisions
+            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
+            
+            if (m_player->getVelocity().y >= 0 && playerCentreY < entityHitbox.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
+            {
+                m_player->setIsGrounded(true);
+                m_player->setYVelocity(0.f);
+                m_player->setPosition({ playerHitbox.m_xPos, entityHitbox.m_yPos - playerHitbox.m_height });
+            }
+            else if (playerCentreY > entityHitbox.m_yPos && playerCentreY < (entityHitbox.m_yPos + entityHitbox.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
+            {
+                if (m_player->getVelocity().x > 0) // Moving right collision
+                    m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
+                else if (m_player->getVelocity().x < 0) // Moving left collision
+                    m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, playerHitbox.m_yPos });
+            }
+        }
     }
+
+    // Deleting marked entities
+    m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
 
     // Collisions with solid colliders
     for (const auto& solidCollider : m_solidColliders)
     {
         if (playerHitbox.intersection(solidCollider))
-            m_player->setPosition(previousPlayerPos);
+        {
+            float playerCentreY = playerHitbox.m_yPos + (playerHitbox.m_height / 2.f);
+            
+            if (m_player->getVelocity().y >= 0 && playerCentreY < solidCollider.m_yPos) // Checks if the player is falling - if the player is falling and collided, they collided with the top of an entity
+            {
+                m_player->setIsGrounded(true);
+                m_player->setYVelocity(0.f);
+                m_player->setPosition({ playerHitbox.m_xPos, solidCollider.m_yPos - playerHitbox.m_height });
+            }
+            else if (playerCentreY > solidCollider.m_yPos && playerCentreY < (solidCollider.m_yPos + solidCollider.m_height)) // Checks whether the player's centre is below the top of the entity and whether the centre is above the bottom of the entity
+            {
+                if (m_player->getVelocity().x > 0) // Moving right collision
+                    m_player->setPosition({ solidCollider.m_xPos - playerHitbox.m_width, playerHitbox.m_yPos });
+                else if (m_player->getVelocity().x < 0) // Moving left collision
+                    m_player->setPosition({ solidCollider.m_xPos + solidCollider.m_width, playerHitbox.m_yPos });
+            }
+        }
     }
 
     // Collisions with trigger boxes
@@ -64,14 +130,7 @@ void Simulation::update()
         }
     }
 
-	m_playerHitboxVisualiser.setPosition({ playerHitbox.m_xPos, playerHitbox.m_yPos });
-	m_playerHitboxVisualiser.setSize({ static_cast<float>(playerHitbox.m_width), static_cast<float>(playerHitbox.m_height) });
-	m_playerHitboxVisualiser.setFillColor(sf::Color(255, 0, 0, 100));
-
-    m_zombieHitboxVisualiser.setPosition({ zombieHitbox.m_xPos, zombieHitbox.m_yPos });
-    m_zombieHitboxVisualiser.setSize({ static_cast<float>(zombieHitbox.m_width), static_cast<float>(zombieHitbox.m_height) });
-    m_zombieHitboxVisualiser.setFillColor(sf::Color(0, 0, 255, 100));
-
+    // Trigger collider visualiser
     for (auto& pair : m_triggerColliders)
     {
         const CollisionRectangle& colliderRect = pair.second;
