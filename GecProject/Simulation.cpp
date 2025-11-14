@@ -130,6 +130,7 @@ void Simulation::update(float deltaTime)
         }
     }
 
+    // Trigger collider visualiser
     for (auto& pair : m_triggerColliders)
     {
         const CollisionRectangle& colliderRect = pair.second;
