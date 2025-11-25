@@ -3,8 +3,7 @@
 
 void PlayerEntity::update(float deltaTime)
 {
-	if (!m_grounded)
-		m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
+	m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
 
 	Entity::update(deltaTime); // Calls the base class update to handle animation and movement
 }
@@ -24,8 +23,11 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 			m_velocity.x = -m_speed; // Moves left by setting a negative x velocity
 			break;
 		case Actions::eJump:
-			// Jump logic would go here
-			m_velocity.y = -m_speed;
+			if (m_grounded)
+			{
+				m_velocity.y = m_jumpHeight; // Sets a negative y velocity to make the player jump
+				m_grounded = false;
+			}
 			break;
 		default:
 			break;

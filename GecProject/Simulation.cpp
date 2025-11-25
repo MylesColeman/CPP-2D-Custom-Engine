@@ -17,7 +17,11 @@ Simulation::Simulation(TextureManager& textureManager) :
 
     // Static Sprite
     // Floor
-	auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 0.f, 108.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
     floor->setPosition({ 0.f, 126.f });
     m_entities.push_back(std::move(floor));
 
@@ -34,11 +38,19 @@ Simulation::Simulation(TextureManager& textureManager) :
     m_entities.push_back(std::move(floor));
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 0.f, 108.f });
+    floor->setPosition({ 54.f, 144.f });
     m_entities.push_back(std::move(floor));
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 54.f, 144.f });
+    floor->setPosition({ 90.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 108.f, 72.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 108.f, 126.f });
     m_entities.push_back(std::move(floor));
     
     // Creating collision rectangles

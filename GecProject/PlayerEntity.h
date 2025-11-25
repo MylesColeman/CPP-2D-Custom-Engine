@@ -14,6 +14,7 @@ public:
 	const sf::Vector2f& getVelocity() const { return m_velocity; }
 private:
 	float m_speed{ 75.f }; // Defines the speed of the player
+	float m_jumpHeight{ -350.f }; // Defines the jump height of the player
 
 	float m_gravity{ 980.f }; // Gravity affecting the player
 	bool m_grounded{ false }; // Whether the player is on the ground
