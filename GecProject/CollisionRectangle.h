@@ -8,10 +8,10 @@ public:
 	float m_xPos{ 0.f };
 	float m_yPos{ 0.f };
 
-	int m_height{ 0 };
-	int m_width{ 0 };
+	float m_height{ 0.f };
+	float m_width{ 0.f };
 
-	CollisionRectangle(float xPos = 0.f, float yPos = 0.f, int height = 0, int width = 0)
+	CollisionRectangle(float xPos = 0.f, float yPos = 0.f, float height = 0.f, float width = 0.f)
 		: m_xPos(xPos), m_yPos(yPos), m_height(height), m_width(width) {}
 
 	bool intersection(const CollisionRectangle& other) const

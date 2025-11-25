@@ -43,7 +43,7 @@ Simulation::Simulation(TextureManager& textureManager) :
     
     // Creating collision rectangles
     // Event Trigger Test
-    m_triggerColliders["TestTrigger"] = CollisionRectangle(0.f, 0.f, 50, 50);
+    m_triggerColliders["TestTrigger"] = CollisionRectangle(0.f, 0.f, 50.f, 50.f);
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions

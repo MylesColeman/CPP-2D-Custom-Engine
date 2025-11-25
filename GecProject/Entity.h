@@ -23,8 +23,8 @@ public:
 
 		m_isAnimated = true;
 
-		m_hitbox.m_height = m_animation->spriteHeight;
-		m_hitbox.m_width = m_animation->spriteWidth;
+		m_hitbox.m_height = static_cast<float>(m_animation->spriteHeight);
+		m_hitbox.m_width = static_cast<float>(m_animation->spriteWidth);
     };
 
     // Entity constructor for a static, non-animated, entity
@@ -34,8 +34,8 @@ public:
 		m_animation = nullptr;
 		m_isAnimated = false;
 
-        m_hitbox.m_height = sprite.textureRect.size.y;
-        m_hitbox.m_width = sprite.textureRect.size.x;
+        m_hitbox.m_height = static_cast<float>(sprite.textureRect.size.y);
+        m_hitbox.m_width = static_cast<float>(sprite.textureRect.size.x);
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes
