@@ -55,10 +55,10 @@ void Simulation::update(float deltaTime)
     for (auto& entity : m_entities)
         entity->update(deltaTime);
 
-    const CollisionRectangle& playerHitbox = m_player->getHitbox(); // Sets up and updates the hitbox
-
     // Horizontal Updating
     m_player->move({ m_player->getVelocity().x * deltaTime, 0.f }); // Moves the player horizontally based on their velocity
+    m_player->syncHitbox(); // Hitbox gets synced after every movement
+    const CollisionRectangle& playerHitbox = m_player->getHitbox(); // Sets up and updates the hitbox
 
     // Horizontal Collision
     for (const auto& entity : m_entities)
@@ -66,20 +66,31 @@ void Simulation::update(float deltaTime)
         // Skips self-collision
         if (entity.get() == m_player) 
 			continue;
+        // Skips collectable collision, as its handled later
+        if (entity->getType() == EntityType::Collectable)
+			continue;
 
 		const CollisionRectangle& entityHitbox = entity->getHitbox();
+        // Creates a slimmer hitbox for wall checking
+        CollisionRectangle wallCheck = playerHitbox; 
+        wallCheck.m_height -= 2.f;
+        wallCheck.m_yPos += 1.f; // Centres it
 
-        if (m_player->getHitbox().intersection(entityHitbox))
+        if (wallCheck.intersection(entityHitbox))
         {
+            // Checks for horizontal movement
             if (m_player->getVelocity().x > 0)
                 m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, m_player->getPosition().y });
             else if (m_player->getVelocity().x < 0)
 				m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
+
+            m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
         }
     }
 
     // Vertical Updating
     m_player->move({ 0.f, m_player->getVelocity().y * deltaTime });
+    m_player->syncHitbox(); // Hitbox gets synced after every movement
     m_player->setIsGrounded(false); // Resets grounded state each loop
 
 	// Vertical Collision
@@ -88,15 +99,24 @@ void Simulation::update(float deltaTime)
         // Skips self-collision
         if (entity.get() == m_player)
             continue;
+        // Skips collectable collision, as its handled later
+        if (entity->getType() == EntityType::Collectable)
+            continue;
 
 		const CollisionRectangle& entityHitbox = entity->getHitbox();
+        // Creates a slimmer hitbox for floor/ceiling checking
+        CollisionRectangle floorCheck = m_player->getHitbox();
+        floorCheck.m_width -= 2.f;
+        floorCheck.m_xPos += 1.f; // Centres it
 
-        if (m_player->getHitbox().intersection(entityHitbox))
+
+        if (floorCheck.intersection(entityHitbox))
         {
+            // Checks for vertical movement
             if (m_player->getVelocity().y > 0)
             {
                 m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos - playerHitbox.m_height});
-                m_player->setIsGrounded(true);
+                m_player->setIsGrounded(true); // Sets grounded state when landing on a surface
                 m_player->setYVelocity(0.f);
                 
             }
@@ -105,8 +125,31 @@ void Simulation::update(float deltaTime)
                 m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos + entityHitbox.m_height});
                 m_player->setYVelocity(0.f);                
             }
+
+            m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
         }
     }
+
+	// Collectable Collision
+    for (auto& entity : m_entities)
+    {
+        // Skips redundant collisions
+        if (entity.get() == m_player)
+			continue;
+
+        if (entity->getType() == EntityType::Collectable && playerHitbox.intersection(entity->getHitbox()))
+            entity->destroy();
+    }
+
+	// Trigger Collision
+    for (auto& pair : m_triggerColliders)
+    {
+        const CollisionRectangle& triggerHitbox = pair.second;
+        if (playerHitbox.intersection(triggerHitbox))
+        {
+            std::cout << "Triggered: " << pair.first << std::endl;
+        }
+	}
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
