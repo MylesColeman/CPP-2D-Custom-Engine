@@ -85,6 +85,7 @@ void Simulation::update(float deltaTime)
 				m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
 
             m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
+            break;
         }
     }
 
@@ -127,6 +128,7 @@ void Simulation::update(float deltaTime)
             }
 
             m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
+            break;
         }
     }
 
