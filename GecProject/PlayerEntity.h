@@ -15,7 +15,15 @@ public:
 private:
 	float m_speed{ 75.f }; // Defines the speed of the player
 	float m_jumpHeight{ -350.f }; // Defines the jump height of the player
+	bool m_wasJumping{ false }; // Whether the player was jumping in the last frame
 
 	float m_gravity{ 980.f }; // Gravity affecting the player
 	bool m_grounded{ false }; // Whether the player is on the ground
+
+	const Animation* m_playerIdle{ nullptr };
+	const Animation* m_playerJump{ nullptr };
+	const Animation* m_playerJumpShot{ nullptr };
+	const Animation* m_playerStandingShot{ nullptr };
+	const Animation* m_playerWalk{ nullptr };
+	const Animation* m_playerWalkShot{ nullptr };
 };
