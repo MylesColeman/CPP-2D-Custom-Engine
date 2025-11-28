@@ -4,7 +4,7 @@
 class PlayerEntity : public Entity, public IReceivesInput
 {
 public:
-	explicit PlayerEntity(const Animation& animation) : Entity(animation, EntityType::Player) {} // Uses the base class constructor
+	explicit PlayerEntity(const AnimationManager& animManager); // Uses the base class constructor
 
 	void update(float deltaTime) override;
 	void handleInput(const std::vector<Actions>& actions);
@@ -18,7 +18,7 @@ private:
 	bool m_wasJumping{ false }; // Whether the player was jumping in the last frame
 
 	float m_gravity{ 980.f }; // Gravity affecting the player
-	bool m_grounded{ false }; // Whether the player is on the ground
+	bool m_grounded{ true }; // Whether the player is on the ground
 
 	const Animation* m_playerIdle{ nullptr };
 	const Animation* m_playerJump{ nullptr };

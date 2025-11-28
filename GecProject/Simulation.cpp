@@ -5,7 +5,7 @@ Simulation::Simulation(TextureManager& textureManager) :
 {
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
-    auto player = std::make_unique<PlayerEntity>(m_animationManager.getAnimation("playerIdle"));
+    auto player = std::make_unique<PlayerEntity>(m_animationManager);
     m_player = player.get();
     m_entities.push_back(std::move(player));
     m_player->setPosition({ 25.f, 50.f });
@@ -51,6 +51,18 @@ Simulation::Simulation(TextureManager& textureManager) :
 
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
     floor->setPosition({ 108.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 126.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 144.f, 126.f });
+    m_entities.push_back(std::move(floor));
+
+    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
+    floor->setPosition({ 162.f, 126.f });
     m_entities.push_back(std::move(floor));
     
     // Creating collision rectangles

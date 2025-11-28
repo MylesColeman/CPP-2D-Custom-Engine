@@ -1,9 +1,45 @@
 #include "PlayerEntity.h"
 #include <iostream>
 
+PlayerEntity::PlayerEntity(const AnimationManager& animManager) : Entity(animManager.getAnimation("playerIdle"), EntityType::Player)
+{
+	m_playerIdle = &animManager.getAnimation("playerIdle");
+	m_playerJump = &animManager.getAnimation("playerJump");
+	m_playerJumpShot = &animManager.getAnimation("playerJumpShot");
+	m_playerStandingShot = &animManager.getAnimation("playerStandingShot");
+	m_playerWalk = &animManager.getAnimation("playerWalk");
+	m_playerWalkShot = &animManager.getAnimation("playerWalkShot");
+}
+
 void PlayerEntity::update(float deltaTime)
 {
 	m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
+
+	// Sprite Flipper
+	if (m_velocity.x < 0)
+		this->flipSprite(true);
+	else if (m_velocity.x > 0)
+		this->flipSprite(false);
+
+	// Animation Setter
+	if (m_grounded)
+	{
+		if (m_velocity.x != 0)
+		{
+			if (m_animation != m_playerWalk)
+				this->setAnimation(*m_playerWalk);
+		}	
+		else
+		{
+			if (m_animation != m_playerIdle)
+				this->setAnimation(*m_playerIdle);
+		}
+	}
+	else
+	{
+		if (m_animation != m_playerJump)
+			this->setAnimation(*m_playerJump);
+	}
 
 	Entity::update(deltaTime); // Calls the base class update to handle animation and movement
 }
@@ -19,7 +55,6 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 		{
 		case Actions::eMoveRight:
 			m_velocity.x = m_speed; // Moves right by setting a positive x velocity
-			this->setAnimation(AnimationManager::getAnimation("playerWalk"));
 			break;
 		case Actions::eMoveLeft:
 			m_velocity.x = -m_speed; // Moves left by setting a negative x velocity

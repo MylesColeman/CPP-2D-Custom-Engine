@@ -68,13 +68,18 @@ public:
                 m_currentFrame = 0;
             }
 
-            int intRectsYPos = m_currentFrame * m_animation->spriteHeight; // Sets the intRect's Y position based on the current frame 
-
-            /* Updates the intRect, as all sprite sheets are composed vertically 'x' can remain as 0 but 'y' is updated based on the calculation above.The size
-             is calculated using the spriteWidth and spriteHeight variables from the Animation struct */
-            this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
-
             m_animClock.restart();
+        }
+
+        if (m_animation)
+        {
+            /* Updates the intRect, as all sprite sheets are composed vertically 'x' can remain as 0 but 'y' is updated based on the calculation above.The size
+                 is calculated using the spriteWidth and spriteHeight variables from the Animation struct */
+            int intRectsYPos = m_currentFrame * m_animation->spriteHeight; // Sets the intRect's Y position based on the current frame 
+            if (!m_flipped)
+                this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
+            else
+                this->setTextureRect(sf::IntRect({ m_animation->spriteWidth, intRectsYPos }, { -m_animation->spriteWidth, m_animation->spriteHeight }));
         }
 
 		// Updates the hitbox position ensuring it matches the entity's position - follows
@@ -100,6 +105,9 @@ protected:
     CollisionRectangle m_hitbox; // The hitbox for the entity, used for collision detection
     sf::Vector2f m_velocity{ 0.f, 0.f }; // The velocity of the entity, used for movement
     bool m_destroy{ false };
+
+    bool m_flipped{ false };
+    void flipSprite(bool flipped) { m_flipped = flipped; }
 private:
     sf::Clock m_animClock;
     int m_currentFrame{ 0 };
