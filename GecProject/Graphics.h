@@ -10,6 +10,7 @@ public:
 	void display(); // Will be called in main, running all the graphics/display logic
 private:
 	void windowEvents(); // Handles the windows events/interactions, movement, editing and closing
+	void resizeView(const sf::Window& window, sf::View& view); // Resizes the view when the window is resized
 	void update(float deltaTime); // Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 	void render(); // The actual logic behind displaying the sprite to the window
 

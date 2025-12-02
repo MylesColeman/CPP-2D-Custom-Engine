@@ -19,11 +19,15 @@ void DefineGUI(float fps)
 
 // Sets up the window and the simulation
 Graphics::Graphics() :
-    m_window(sf::VideoMode({ 1280, 720 }), "GEC Start Project"),
+    m_window(sf::VideoMode::getDesktopMode(), "GEC Start Project", sf::Style::Default),
     m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
 	m_simulation(m_textureManager)
 {
+    m_window.setPosition({ 0, 0 });
+
     m_window.setVerticalSyncEnabled(true); // Enables VSync to limit FPS
+
+    resizeView(m_window, m_gameView);
     m_window.setView(m_gameView); // Sets the game view to a more readable resolution
 
     // Set up ImGui (the UI library)
@@ -66,7 +70,40 @@ void Graphics::windowEvents()
         // User clicked on window close X
         if (event->is<sf::Event::Closed>())
             m_window.close();
+
+        if (const auto* resized = event->getIf<sf::Event::Resized>())
+        {
+            resizeView(m_window, m_gameView);
+            m_window.setView(m_gameView);
+        }
     }
+}
+
+void Graphics::resizeView(const sf::Window& window, sf::View& view)
+{
+    float windowRatio = window.getSize().x / (float)window.getSize().y;
+	float viewRatio = view.getSize().x / (float)view.getSize().y;
+    float xSize = 1.f;
+	float ySize = 1.f;
+    float xPos = 0.f;
+    float yPos = 0.f;
+
+	bool horizontalSpacing = true;
+    if (windowRatio < viewRatio)
+		horizontalSpacing = false;
+
+    if (horizontalSpacing)
+    {
+		xSize = viewRatio / windowRatio;
+        xPos = (1.f - xSize) / 2.f;
+    }
+    else
+    {
+        ySize = windowRatio / viewRatio;
+		yPos = (1.f - ySize) / 2.f;
+    }
+
+    view.setViewport(sf::FloatRect({ xPos, yPos }, { xSize, ySize }));
 }
 
 // Handles the graphical updating of the simulation, which in turn handles the graphical updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
