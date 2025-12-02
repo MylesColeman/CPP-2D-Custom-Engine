@@ -132,6 +132,16 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
+  //  if (GET PLAYER, GETTER IN SIMULATION)
+  //  {
+		//sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
+  //      m_gameView.setCenter(playerPos);
+
+  //      // ADD CAMERA BOUND CHECKING HERE, SO CAMERA DOESN'T SHOW AREAS OFF THE SCREEN
+  //  }
+
+	m_window.setView(m_gameView); // Updates the view
+
     // Loops through the vector of entities created in the simulation, and draws them
     for (const auto& entity : m_simulation.getEntities())
         m_window.draw(*entity);
