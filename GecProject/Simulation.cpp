@@ -64,10 +64,6 @@ Simulation::Simulation(TextureManager& textureManager) :
     floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
     floor->setPosition({ 162.f, 126.f });
     m_entities.push_back(std::move(floor));
-    
-    // Creating collision rectangles
-    // Event Trigger Test
-    m_triggerColliders["TestTrigger"] = CollisionRectangle(0.f, 0.f, 50.f, 50.f);
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
@@ -170,22 +166,9 @@ void Simulation::update(float deltaTime)
 	// Trigger Collision
     for (auto& pair : m_triggerColliders)
     {
-        const CollisionRectangle& triggerHitbox = pair.second;
-        if (playerHitbox.intersection(triggerHitbox))
-        {
-            std::cout << "Triggered: " << pair.first << std::endl;
-        }
+        
 	}
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
-
-    // Trigger collider visualiser
-    for (auto& pair : m_triggerColliders)
-    {
-        const CollisionRectangle& colliderRect = pair.second;
-        m_triggerHitboxVisualiser.setPosition({ colliderRect.m_xPos, colliderRect.m_yPos });
-        m_triggerHitboxVisualiser.setSize({ static_cast<float>(colliderRect.m_width), static_cast<float>(colliderRect.m_height) });
-        m_triggerHitboxVisualiser.setFillColor(sf::Color(0, 255, 0, 100));
-	}
 }

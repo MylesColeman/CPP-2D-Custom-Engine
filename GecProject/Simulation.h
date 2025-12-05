@@ -9,7 +9,6 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <SFML/Graphics.hpp> // Added for just for this test/debugging
 
 class Simulation
 {
@@ -23,11 +22,18 @@ public:
         return m_entities;
     }
 
+    const PlayerEntity* getPlayer() const
+    {
+        return m_player;
+    }
+
     std::vector<CollisionRectangle> m_solidColliders;
     std::unordered_map<std::string, CollisionRectangle> m_triggerColliders;
 
     // Debugging hitbox visualisers
     sf::RectangleShape m_triggerHitboxVisualiser;
+
+
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;

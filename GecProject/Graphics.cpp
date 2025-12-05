@@ -132,13 +132,29 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
-  //  if (GET PLAYER, GETTER IN SIMULATION)
-  //  {
-		//sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
-  //      m_gameView.setCenter(playerPos);
+    if (m_simulation.getPlayer())
+    {
+        sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
+        m_gameView.setCenter(playerPos);
 
-  //      // ADD CAMERA BOUND CHECKING HERE, SO CAMERA DOESN'T SHOW AREAS OFF THE SCREEN
-  //  }
+        if (playerPos.x - (m_gameView.getSize().x / 2) < 0)
+        {
+            std::cout << "Left bound reached" << std::endl;
+        }
+        else if (playerPos.x + (m_gameView.getSize().x / 2) > m_window.getSize().x)
+        {
+            std::cout << "Right bound reached" << std::endl;
+        }
+
+        if (playerPos.y - (m_gameView.getSize().y / 2) < 0)
+        {
+            std::cout << "Top bound reached" << std::endl;
+        }
+        else if (playerPos.y + (m_gameView.getSize().y / 2) > m_window.getSize().y)
+        {
+            std::cout << "Bottom bound reached" << std::endl;
+        }
+    }
 
 	m_window.setView(m_gameView); // Updates the view
 
