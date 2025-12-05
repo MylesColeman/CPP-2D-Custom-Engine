@@ -60,7 +60,8 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 			m_velocity.x = -m_speed; // Moves left by setting a negative x velocity
 			break;
 		case Actions::eJump:
-			isJumping = true; // Sets the jumping flag to true
+			m_velocity.y = -m_speed;
+			//isJumping = true; // Sets the jumping flag to true
 			break;
 		default:
 			break;

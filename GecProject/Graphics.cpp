@@ -137,22 +137,22 @@ void Graphics::render()
         sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
         m_gameView.setCenter(playerPos);
 
-        if (playerPos.x - (m_gameView.getSize().x / 2) < 0)
+        if (playerPos.x - (m_gameView.getSize().x / 2) < 0) // Checking left bound
         {
-            std::cout << "Left bound reached" << std::endl;
+			m_gameView.setCenter({playerPos.x - ((playerPos.x - (m_gameView.getSize().x / 2)) - 0), playerPos.y});
         }
-        else if (playerPos.x + (m_gameView.getSize().x / 2) > m_window.getSize().x)
+        else if (playerPos.x + (m_gameView.getSize().x / 2) > m_window.getSize().x) // Checking right bound
         {
-            std::cout << "Right bound reached" << std::endl;
+            m_gameView.setCenter({ playerPos.x + ((playerPos.x - (m_gameView.getSize().x / 2)) - 0), playerPos.y }); // Doesn't work
         }
 
-        if (playerPos.y - (m_gameView.getSize().y / 2) < 0)
+        if (playerPos.y - (m_gameView.getSize().y / 2) < 0) // Checking upper bound
         {
-            std::cout << "Top bound reached" << std::endl;
+            m_gameView.setCenter({ playerPos.x, playerPos.y - ((playerPos.y - (m_gameView.getSize().y / 2)) - 0)});
         }
-        else if (playerPos.y + (m_gameView.getSize().y / 2) > m_window.getSize().y)
+        else if (playerPos.y + (m_gameView.getSize().y / 2) > m_window.getSize().y) // Checking lower bound
         {
-            std::cout << "Bottom bound reached" << std::endl;
+            m_gameView.setCenter({ playerPos.x, playerPos.y + ((playerPos.y - (m_gameView.getSize().y / 2)) - 0) }); // Doesn't work
         }
     }
 
