@@ -1,7 +1,7 @@
 #include "PlayerEntity.h"
 #include <iostream>
 
-PlayerEntity::PlayerEntity(const AnimationManager& animManager) : Entity(animManager.getAnimation("playerIdle"), EntityType::Player)
+PlayerEntity::PlayerEntity(const AnimationManager& animManager) : DynamicEntity(animManager.getAnimation("playerIdle"), EntityType::Player)
 {
 	m_playerIdle = &animManager.getAnimation("playerIdle");
 	m_playerJump = &animManager.getAnimation("playerJump");
@@ -13,8 +13,6 @@ PlayerEntity::PlayerEntity(const AnimationManager& animManager) : Entity(animMan
 
 void PlayerEntity::update(float deltaTime)
 {
-	m_velocity.y += m_gravity * deltaTime; // Applies gravity to the player's vertical velocity, so they fall
-
 	// Sprite Flipper
 	if (m_velocity.x < 0)
 		this->flipSprite(true);
@@ -41,7 +39,7 @@ void PlayerEntity::update(float deltaTime)
 			this->setAnimation(*m_playerJump);
 	}
 
-	Entity::update(deltaTime); // Calls the base class update to handle animation and movement
+	DynamicEntity::update(deltaTime); // Calls the base class update to handle animation and movement
 }
 
 void PlayerEntity::handleInput(const std::vector<Actions>& actions)

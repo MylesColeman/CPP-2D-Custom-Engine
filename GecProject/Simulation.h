@@ -16,6 +16,11 @@ public:
     Simulation(TextureManager& textureManager);
     void update(float deltaTime); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
+    sf::Vector2f getLevelSize() const
+    {
+        return m_levelSize;
+    }
+
     // A getter function for the entities for use in the graphics (for rendering)
     const std::vector<std::unique_ptr<Entity>>& getEntities() const
     {
@@ -42,6 +47,8 @@ private:
 
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
+
+    sf::Vector2f m_levelSize{ 500.f, 500.f };
 
     int m_score{ 0 };
 };

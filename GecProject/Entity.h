@@ -103,7 +103,6 @@ protected:
     const Animation* m_animation{ nullptr };
     EntityType m_type;
     CollisionRectangle m_hitbox; // The hitbox for the entity, used for collision detection
-    sf::Vector2f m_velocity{ 0.f, 0.f }; // The velocity of the entity, used for movement
     bool m_destroy{ false };
 
     bool m_flipped{ false };

@@ -1,8 +1,11 @@
 #include "Simulation.h"
+#include "DynamicEntity.h"
 
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
+    m_levelSize = { 500.f, 500.f };
+
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
     auto player = std::make_unique<PlayerEntity>(m_animationManager);
@@ -73,92 +76,95 @@ void Simulation::update(float deltaTime)
 
     // Loops through all entities and updates them
     for (auto& entity : m_entities)
+    {
         entity->update(deltaTime);
 
-    // Horizontal Updating
-    m_player->move({ m_player->getVelocity().x * deltaTime, 0.f }); // Moves the player horizontally based on their velocity
-    m_player->syncHitbox(); // Hitbox gets synced after every movement
-    const CollisionRectangle& playerHitbox = m_player->getHitbox(); // Sets up and updates the hitbox
+		DynamicEntity* dynamicEntity = dynamic_cast<DynamicEntity*>(entity.get());
 
-    // Horizontal Collision
-    for (const auto& entity : m_entities)
-    {
-        // Skips self-collision
-        if (entity.get() == m_player) 
-			continue;
-        // Skips collectable collision, as its handled later
-        if (entity->getType() == EntityType::Collectable)
-			continue;
+        if (dynamicEntity == nullptr) continue; // Skips if not dynamic
 
-		const CollisionRectangle& entityHitbox = entity->getHitbox();
-        // Creates a slimmer hitbox for wall checking
-        CollisionRectangle wallCheck = playerHitbox; 
-        wallCheck.m_height -= 2.f;
-        wallCheck.m_yPos += 1.f; // Centres it
+		sf::Vector2f velocity = dynamicEntity->getVelocity();
 
-        if (wallCheck.intersection(entityHitbox))
+        // X
+        dynamicEntity->move({ velocity.x * deltaTime, 0.f });
+        dynamicEntity->syncHitbox();
+
+		const CollisionRectangle& entityHitbox = dynamicEntity->getHitbox();
+
+        for (const auto& wall : m_entities)
         {
-            // Checks for horizontal movement
-            if (m_player->getVelocity().x > 0)
-                m_player->setPosition({ entityHitbox.m_xPos - playerHitbox.m_width, m_player->getPosition().y });
-            else if (m_player->getVelocity().x < 0)
-				m_player->setPosition({ entityHitbox.m_xPos + entityHitbox.m_width, m_player->getPosition().y });
-
-            m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
-            break;
-        }
-    }
-
-    // Vertical Updating
-    m_player->move({ 0.f, m_player->getVelocity().y * deltaTime });
-    m_player->syncHitbox(); // Hitbox gets synced after every movement
-    m_player->setIsGrounded(false); // Resets grounded state each loop
-
-	// Vertical Collision
-    for (const auto& entity : m_entities)
-    {
-        // Skips self-collision
-        if (entity.get() == m_player)
-            continue;
-        // Skips collectable collision, as its handled later
-        if (entity->getType() == EntityType::Collectable)
-            continue;
-
-		const CollisionRectangle& entityHitbox = entity->getHitbox();
-        // Creates a slimmer hitbox for floor/ceiling checking
-        CollisionRectangle floorCheck = m_player->getHitbox();
-        floorCheck.m_width -= 2.f;
-        floorCheck.m_xPos += 1.f; // Centres it
-
-
-        if (floorCheck.intersection(entityHitbox))
-        {
-            // Checks for vertical movement
-            if (m_player->getVelocity().y > 0)
-            {
-                m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos - playerHitbox.m_height});
-                m_player->setIsGrounded(true); // Sets grounded state when landing on a surface
-                m_player->setYVelocity(0.f);
+			// Skips self-collision & collectable collision
+            if (wall.get() == dynamicEntity) continue;          
+            if (wall->getType() == EntityType::Collectable) continue;
                 
-            }
-            else if (m_player->getVelocity().y < 0)
-            {
-                m_player->setPosition({ m_player->getPosition().x, entityHitbox.m_yPos + entityHitbox.m_height});
-                m_player->setYVelocity(0.f);                
-            }
+            // Creates a slimmer hitbox for wall checking
+            CollisionRectangle wallCheck = entityHitbox;
+            wallCheck.m_height -= 2.f;
+            wallCheck.m_yPos += 1.f; // Centres it
 
-            m_player->syncHitbox(); // Ensures the hitbox is synced after the position change
-            break;
+            // Wall Collisions
+            if (wallCheck.intersection(wall->getHitbox()))
+            {
+                sf::Vector2f pos = dynamicEntity->getPosition();
+
+                if (velocity.x > 0) // Moving Right
+                    pos.x = wall->getHitbox().m_xPos - entityHitbox.m_width;
+                else if (velocity.x < 0) // Moving Left
+                    pos.x = wall->getHitbox().m_xPos + wall->getHitbox().m_width;
+
+                dynamicEntity->setPosition(pos);
+                dynamicEntity->syncHitbox();
+            }
+        }
+
+        // Y
+        dynamicEntity->move({ 0.f, velocity.y * deltaTime });
+        dynamicEntity->syncHitbox();
+		dynamicEntity->setIsGrounded(false); // Resets grounded state each loop
+
+        for (const auto& floor : m_entities)
+        {
+            // Skips self-collision & collectable collision
+            if (floor.get() == dynamicEntity) continue;
+            if (floor->getType() == EntityType::Collectable) continue;
+
+            // Creates a slimmer hitbox for wall checking
+            CollisionRectangle floorCheck = entityHitbox;
+            floorCheck.m_width -= 2.f;
+            floorCheck.m_xPos += 1.f; // Centres it
+
+            // Floor Collisions
+            if (floorCheck.intersection(floor->getHitbox()))
+            {
+                sf::Vector2f pos = dynamicEntity->getPosition();
+
+                if (velocity.y > 0) // Moving Down (Falling)
+                {
+                    pos.y = floor->getHitbox().m_yPos - entityHitbox.m_height;
+                    dynamicEntity->setIsGrounded(true);
+
+                    // Stop falling
+                    dynamicEntity->setVelocity({ velocity.x, 0.f });
+                }
+                else if (velocity.y < 0) // Moving Up (Jumping)
+                {
+                    pos.y = floor->getHitbox().m_yPos + floor->getHitbox().m_height;
+         
+                    // Stop rising
+                    dynamicEntity->setVelocity({ velocity.x, 0.f });
+                }
+
+                dynamicEntity->setPosition(pos);
+                dynamicEntity->syncHitbox();
+            }
         }
     }
+
+    const CollisionRectangle& playerHitbox = m_player->getHitbox();
 
 	// Collectable Collision
     for (auto& entity : m_entities)
     {
-        // Skips redundant collisions
-        if (entity.get() == m_player)
-			continue;
-
         if (entity->getType() == EntityType::Collectable && playerHitbox.intersection(entity->getHitbox()))
             entity->destroy();
     }
@@ -166,7 +172,7 @@ void Simulation::update(float deltaTime)
 	// Trigger Collision
     for (auto& pair : m_triggerColliders)
     {
-        
+        // None currently implemented
 	}
 
     // Deleting marked entities

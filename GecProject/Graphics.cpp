@@ -136,8 +136,9 @@ void Graphics::render()
     {
         sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
         
-        float levelWidth = 500.f; // Need to pass these through from simulation. or level data
-        float levelHeight = 500.f;
+		sf::Vector2f levelSize = m_simulation.getLevelSize();
+        float levelWidth = levelSize.x; // Need to pass these through from simulation. or level data
+        float levelHeight = levelSize.y;
 
         // Defining the camera bounds
         // X
