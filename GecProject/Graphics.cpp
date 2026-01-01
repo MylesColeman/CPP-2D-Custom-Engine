@@ -135,25 +135,30 @@ void Graphics::render()
     if (m_simulation.getPlayer())
     {
         sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
+        
+        float levelWidth = 500.f; // Need to pass these through from simulation. or level data
+        float levelHeight = 500.f;
+
+        // Defining the camera bounds
+        // X
+        float minX = m_gameView.getSize().x / 2.f;
+        float maxX = levelWidth - minX;
+
+        // Y
+        float minY = m_gameView.getSize().y / 2.f;
+        float maxY = levelHeight - minY;
+
+        // Clamping the camera to the level bounds
+        // X
+        if (playerPos.x < minX) playerPos.x = minX;
+        else if (playerPos.x > maxX) playerPos.x = maxX;
+
+        // Y
+        if (playerPos.y < minY) playerPos.y = minY;
+        else if (playerPos.y > maxY) playerPos.y = maxY;
+
+        // Applying the new clamped camera position
         m_gameView.setCenter(playerPos);
-
-        if (playerPos.x - (m_gameView.getSize().x / 2) < 0) // Checking left bound
-        {
-			m_gameView.setCenter({playerPos.x - ((playerPos.x - (m_gameView.getSize().x / 2)) - 0), playerPos.y});
-        }
-        else if (playerPos.x + (m_gameView.getSize().x / 2) > m_window.getSize().x) // Checking right bound
-        {
-            m_gameView.setCenter({ playerPos.x + ((playerPos.x - (m_gameView.getSize().x / 2)) - 0), playerPos.y }); // Doesn't work
-        }
-
-        if (playerPos.y - (m_gameView.getSize().y / 2) < 0) // Checking upper bound
-        {
-            m_gameView.setCenter({ playerPos.x, playerPos.y - ((playerPos.y - (m_gameView.getSize().y / 2)) - 0)});
-        }
-        else if (playerPos.y + (m_gameView.getSize().y / 2) > m_window.getSize().y) // Checking lower bound
-        {
-            m_gameView.setCenter({ playerPos.x, playerPos.y + ((playerPos.y - (m_gameView.getSize().y / 2)) - 0) }); // Doesn't work
-        }
     }
 
 	m_window.setView(m_gameView); // Updates the view
