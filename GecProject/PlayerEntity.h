@@ -11,7 +11,13 @@ public:
 
 	bool tryShoot(sf::Vector2f& direction, bool& facingRight); // Returns whether the player's attempt to shoot was successful
 	bool isFacingRight() const { return !m_flipped; } // Used to determine which way the player is facing for shooting
+
+	// Health management
+	void takeDamage(int amount);
+	int getHealth() const { return m_health; }
 private:
+	int m_health{ 5 }; // Player health
+
 	float m_speed{ 75.f }; // Defines the speed of the player
 	float m_jumpHeight{ -350.f }; // Defines the jump height of the player
 	bool m_wasJumping{ false }; // Whether the player was jumping in the last frame

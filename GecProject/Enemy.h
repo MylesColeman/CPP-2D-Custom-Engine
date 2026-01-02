@@ -14,7 +14,7 @@ public:
     bool tryShoot(sf::Vector2f& direction); // Returns whether the player's attempt to shoot was successful
 
     // Health management
-    void takeDamage(int amount) { m_health -= amount; }
+    void takeDamage(int amount);
     int getHealth() const { return m_health; }
 private:
 	int m_health{ 2 }; // Enemy health

@@ -237,7 +237,7 @@ void Simulation::update(float deltaTime)
                 {
 					// Damages player upon being hit by enemy bullet
                     if (obstacle->getType() == EntityType::Player)
-                        std::cout << "Player Hit!" << std::endl; // PLAYER HEALTH NEEDS IMPLEMENTING
+                        m_player->takeDamage(1);
 
                 }
 				else // Player bullet
@@ -254,7 +254,12 @@ void Simulation::update(float deltaTime)
                             if (enemy->getHealth() <= 0)
                             {
                                 obstacle->destroy();
-                                m_score += 5;
+
+								// Checks if the enemy was destroyed to add score
+                                if (enemy->getDestroy())
+                                {
+                                    m_score += 5;
+                                }
                             }
                         }
                     }

@@ -118,6 +118,15 @@ bool Enemy::tryShoot(sf::Vector2f& direction)
     return false; // Didn't shoot
 }
 
+void Enemy::takeDamage(int amount)
+{
+    m_health -= amount;
+
+	// If health is 0 or below, destroy the enemy
+    if (m_health <= 0)
+        this->destroy(); // The enemy is destroyed
+}
+
 bool Enemy::canSeePlayer() const
 {
     if (!m_target) return false; // No target to see
