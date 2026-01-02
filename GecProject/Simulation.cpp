@@ -71,11 +71,18 @@ void Simulation::update(float deltaTime)
             if (wallCheck.intersection(wall->getHitbox()))
             {
                 sf::Vector2f pos = dynamicEntity->getPosition();
+                float halfWidth = entityHitbox.m_width / 2.f;
 
                 if (velocity.x > 0) // Moving Right
-                    pos.x = wall->getHitbox().m_xPos - entityHitbox.m_width;
+                {
+                    float targetLeft = wall->getHitbox().m_xPos - entityHitbox.m_width;
+                    pos.x = targetLeft + halfWidth;
+                }
                 else if (velocity.x < 0) // Moving Left
-                    pos.x = wall->getHitbox().m_xPos + wall->getHitbox().m_width;
+                {
+                    float targetLeft = wall->getHitbox().m_xPos + wall->getHitbox().m_width;
+                    pos.x = targetLeft + halfWidth;
+                }
 
                 dynamicEntity->setPosition(pos);
                 dynamicEntity->syncHitbox();
@@ -102,10 +109,13 @@ void Simulation::update(float deltaTime)
             if (floorCheck.intersection(floor->getHitbox()))
             {
                 sf::Vector2f pos = dynamicEntity->getPosition();
+                float halfHeight = entityHitbox.m_height / 2.f;
 
                 if (velocity.y > 0) // Moving Down (Falling)
                 {
-                    pos.y = floor->getHitbox().m_yPos - entityHitbox.m_height;
+                    float targetTop = floor->getHitbox().m_yPos - entityHitbox.m_height;
+                    pos.y = targetTop + halfHeight;
+
                     dynamicEntity->setIsGrounded(true);
 
                     // Stop falling
@@ -113,7 +123,8 @@ void Simulation::update(float deltaTime)
                 }
                 else if (velocity.y < 0) // Moving Up (Jumping)
                 {
-                    pos.y = floor->getHitbox().m_yPos + floor->getHitbox().m_height;
+                    float targetTop = floor->getHitbox().m_yPos + floor->getHitbox().m_height;
+                    pos.y = targetTop + halfHeight;
          
                     // Stop rising
                     dynamicEntity->setVelocity({ velocity.x, 0.f });

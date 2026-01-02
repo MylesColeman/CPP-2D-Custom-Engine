@@ -25,6 +25,8 @@ public:
 
 		m_hitbox.m_height = static_cast<float>(m_animation->spriteHeight);
 		m_hitbox.m_width = static_cast<float>(m_animation->spriteWidth);
+
+        this->setOrigin({ m_hitbox.m_width / 2.f, m_hitbox.m_height / 2.f });
     };
 
     // Entity constructor for a static, non-animated, entity
@@ -36,6 +38,8 @@ public:
 
         m_hitbox.m_height = static_cast<float>(sprite.textureRect.size.y);
         m_hitbox.m_width = static_cast<float>(sprite.textureRect.size.x);
+
+        this->setOrigin({ m_hitbox.m_width / 2.f, m_hitbox.m_height / 2.f });
     };
 
 	virtual ~Entity() = default; // Virtual destructor to ensure proper cleanup of derived classes
@@ -54,11 +58,16 @@ public:
         if (!m_flipped)
         {
             // Face Right (Normal)
+            this->setOrigin(m_animation->pivot);
+            
             this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
         }
         else
         {
             // Face Left (Flipped)
+            float flippedPivotX = m_animation->spriteWidth - m_animation->pivot.x;
+            this->setOrigin({ flippedPivotX, m_animation->pivot.y });
+            
             // Start X at width, and use negative width to flip
             this->setTextureRect(sf::IntRect({ m_animation->spriteWidth, intRectsYPos }, { -m_animation->spriteWidth, m_animation->spriteHeight }));
         }
@@ -87,9 +96,16 @@ public:
                  is calculated using the spriteWidth and spriteHeight variables from the Animation struct */
             int intRectsYPos = m_currentFrame * m_animation->spriteHeight; // Sets the intRect's Y position based on the current frame 
             if (!m_flipped)
+            {
+                this->setOrigin(m_animation->pivot);
                 this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
+            }
             else
+            {
+                float flippedPivotX = m_animation->spriteWidth - m_animation->pivot.x;
+                this->setOrigin({ flippedPivotX, m_animation->pivot.y });
                 this->setTextureRect(sf::IntRect({ m_animation->spriteWidth, intRectsYPos }, { -m_animation->spriteWidth, m_animation->spriteHeight }));
+            }
         }
 
 		// Updates the hitbox position ensuring it matches the entity's position - follows
@@ -99,8 +115,8 @@ public:
 	// Syncs the hitbox to the entity's position, should be called after any position changes
     void syncHitbox()
     {
-        m_hitbox.m_xPos = this->getPosition().x;
-        m_hitbox.m_yPos = this->getPosition().y;
+        m_hitbox.m_xPos = this->getPosition().x - (m_hitbox.m_width / 2.f);
+        m_hitbox.m_yPos = this->getPosition().y - (m_hitbox.m_height / 2.f);
     }
 
     void destroy() { m_destroy = true; } // Sets the entity to be destroyed

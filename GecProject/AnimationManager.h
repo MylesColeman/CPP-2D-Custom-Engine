@@ -13,6 +13,7 @@ struct Animation
 	int spriteWidth{ 0 };
 	int spriteHeight{ 0 };
 	float timeBetweenFrames{ 0.1f }; // How often the sprite is updated - animated
+	sf::Vector2f pivot{ 0.f, 0.f }; // Where the animation should pivot around, for flipping
 };
 
 // What a static sprite needs
@@ -37,6 +38,21 @@ public:
 		configureAnimation("playerWalk", "Data/Textures/Player/skeleton_walk.png", 6);
 		configureAnimation("playerWalkShot", "Data/Textures/Player/skeleton_walkShot.png", 8, 0.0625f);
 
+		float spineX = 6.5f;
+		float spineY = m_animations["playerIdle"].spriteHeight / 2.f;
+		setAnimationPivot("playerIdle", { spineX, spineY });
+		spineY = m_animations["playerJump"].spriteHeight / 2.f;
+		setAnimationPivot("playerJump", { spineX, spineY });
+		spineY = m_animations["playerJumpShot"].spriteHeight / 2.f;
+		setAnimationPivot("playerJumpShot", { spineX, spineY });
+		spineY = m_animations["playerWalk"].spriteHeight / 2.f;
+		setAnimationPivot("playerWalk", { spineX, spineY });
+		spineY = m_animations["playerWalkShot"].spriteHeight / 2.f;
+		setAnimationPivot("playerWalkShot", { spineX, spineY });
+		spineX = 7.5f;
+		spineY = m_animations["playerStandingShot"].spriteHeight / 2.f;
+		setAnimationPivot("playerStandingShot", { spineX, spineY });
+
 		// Statics
 		// World
 		configureStaticSprite("TopEdgelessFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 36, 18 }, { 18, 18 }));
@@ -60,6 +76,7 @@ public:
 		anim.spriteWidth = texture->getSize().x;
 		anim.spriteHeight = texture->getSize().y / frameCount;
 		anim.timeBetweenFrames = animSpeed;
+		anim.pivot = { anim.spriteWidth / 2.f, anim.spriteHeight / 2.f };
 
 		m_animations[animName] = anim;
 	}
@@ -91,6 +108,15 @@ public:
 	const StaticSprite& getStaticSprite(const std::string& spriteName) const
 	{
 		return m_staticSprites.at(spriteName);
+	}
+
+	// Used to manually alter the pivor point of an animation
+	void setAnimationPivot(const std::string& animName, sf::Vector2f newPivot)
+	{
+		if (m_animations.count(animName))
+		{
+			m_animations[animName].pivot = newPivot;
+		}
 	}
 private:
 	TextureManager& m_textureManager;
