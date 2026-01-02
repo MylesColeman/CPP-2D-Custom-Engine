@@ -1,5 +1,4 @@
 #include "PlayerEntity.h"
-#include <iostream>
 
 PlayerEntity::PlayerEntity(const AnimationManager& animManager) : DynamicEntity(animManager.getAnimation("playerIdle"), EntityType::Player)
 {

@@ -58,7 +58,5 @@ private:
 
     std::vector<std::unique_ptr<Bullet>> m_bulletPool;
 
-    std::vector<std::unique_ptr<Entity>> m_newEntities;
-
     int m_score{ 0 };
 };

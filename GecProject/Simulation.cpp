@@ -87,7 +87,6 @@ void Simulation::update(float deltaTime)
             if (wall.get() == dynamicEntity) continue;          
             if (wall->getType() == EntityType::Collectable) continue;
             if (wall->getType() == EntityType::Player) continue;
-            if (wall->getType() == EntityType::Bullet) continue;
                 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle wallCheck = entityHitbox;
@@ -97,12 +96,6 @@ void Simulation::update(float deltaTime)
             // Wall Collisions
             if (wallCheck.intersection(wall->getHitbox()))
             {
-                if (dynamicEntity->getType() == EntityType::Bullet)
-                {
-                    dynamicEntity->destroy();
-                    break; // Stop checking other walls, bullet is dead
-                }
-
                 sf::Vector2f pos = dynamicEntity->getPosition();
                 float halfWidth = entityHitbox.m_width / 2.f;
 
@@ -122,8 +115,6 @@ void Simulation::update(float deltaTime)
             }
         }
 
-        if (dynamicEntity->getDestroy()) continue; // If the bullet's already been destroyed, skip further checks
-
         // Y
         dynamicEntity->move({ 0.f, velocity.y * deltaTime });
         dynamicEntity->syncHitbox();
@@ -135,7 +126,6 @@ void Simulation::update(float deltaTime)
             if (floor.get() == dynamicEntity) continue;
             if (floor->getType() == EntityType::Collectable) continue;
             if (floor->getType() == EntityType::Player) continue;
-            if (floor->getType() == EntityType::Bullet) continue;
 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle floorCheck = entityHitbox;
@@ -145,12 +135,6 @@ void Simulation::update(float deltaTime)
             // Floor Collisions
             if (floorCheck.intersection(floor->getHitbox()))
             {
-                if (dynamicEntity->getType() == EntityType::Bullet)
-                {
-                    dynamicEntity->destroy();
-					break; // Stop checking other floors, bullet is dead
-                }
-
                 sf::Vector2f pos = dynamicEntity->getPosition();
                 float halfHeight = entityHitbox.m_height / 2.f;
 
@@ -218,15 +202,6 @@ void Simulation::update(float deltaTime)
     {
         // None currently implemented
 	}
-
-    if (!m_newEntities.empty())
-    {
-        for (auto& newEnt : m_newEntities)
-        {
-            m_entities.push_back(std::move(newEnt));
-        }
-        m_newEntities.clear();
-    }
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
