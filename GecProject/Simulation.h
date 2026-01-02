@@ -4,6 +4,7 @@
 #include "PlayerEntity.h"
 #include "Collectable.h"
 #include "Bullet.h"
+#include "Enemy.h"
 #include "InputManager.h"
 #include "CollisionRectangle.h"
 #include <vector>

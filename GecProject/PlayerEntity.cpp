@@ -1,6 +1,7 @@
 #include "PlayerEntity.h"
 
-PlayerEntity::PlayerEntity(const AnimationManager& animManager) : DynamicEntity(animManager.getAnimation("playerIdle"), EntityType::Player)
+PlayerEntity::PlayerEntity(const AnimationManager& animManager) 
+	: DynamicEntity(animManager.getAnimation("playerIdle"), EntityType::Player)
 {
 	m_playerIdle = &animManager.getAnimation("playerIdle");
 	m_playerJump = &animManager.getAnimation("playerJump");

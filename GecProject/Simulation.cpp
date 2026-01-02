@@ -16,10 +16,16 @@ Simulation::Simulation(TextureManager& textureManager) :
     // Bullet Pool
     const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
 	// Pre-create a pool of bullets
-    for (int i = 0; i < 15; ++i)
+    for (int i = 0; i < 20; ++i)
     {
         m_bulletPool.push_back(std::make_unique<Bullet>(bulletSprite));
     }
+
+    // Enemy
+    auto enemy = std::make_unique<Enemy>(m_animationManager, 200.f);
+    enemy->setPosition({ 300.f, 50.f });
+    enemy->setTarget(m_player); // Sets the player as the enemy's target
+    m_entities.push_back(std::move(enemy));
 
 	// Collectable
     auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
@@ -64,8 +70,37 @@ void Simulation::update(float deltaTime)
         {
             if (!bullet->isActive())
             {
-				bullet->fire(spawnPos, shootDir * 250.f); // Multiplies direction by speed
+				bullet->fire(spawnPos, shootDir * 250.f, false); // Multiplies direction by speed
                 break; // We fired one, stop looking
+            }
+        }
+    }
+
+	// Enemy Shooting
+    for (auto& entity : m_entities)
+    {
+        // Check if this entity is an Enemy
+        Enemy* enemy = dynamic_cast<Enemy*>(entity.get());
+        if (!enemy) continue; // Skip non-enemies
+
+		sf::Vector2f shotDir; // Checks which direction to shoot in
+		// Attempt to shoot
+        if (enemy->tryShoot(shotDir))
+        {
+            // Determine spawn position (adjust for gun height)
+            sf::Vector2f spawnPos = enemy->getPosition();
+            spawnPos.x += 6.5f;
+            spawnPos.y -= 10.f;
+
+            // Find a bullet to fire
+            for (auto& bullet : m_bulletPool)
+            {
+				// Only fire if the bullet is inactive
+                if (!bullet->isActive())
+                {
+                    bullet->fire(spawnPos, shotDir * 250.f, true);
+                    break;
+                }
             }
         }
     }
@@ -175,7 +210,6 @@ void Simulation::update(float deltaTime)
 		if (!bullet->isActive()) continue; // Only checks active bullets
 
 		bullet->update(deltaTime); // Ensures the bullet is deactivated after its lifetime
-
         bullet->move(bullet->getVelocity() * deltaTime);
         bullet->syncHitbox();
 
@@ -183,13 +217,48 @@ void Simulation::update(float deltaTime)
         for (const auto& obstacle : m_entities)
         {
             // Ignore self types and collectables
-            if (obstacle->getType() == EntityType::Player ||
-                obstacle->getType() == EntityType::Collectable ||
+            if (obstacle->getType() == EntityType::Collectable ||
                 obstacle->getType() == EntityType::Bullet) continue;
+
+			// Checks bullet type to determine what it can hit
+			if (bullet->isEnemyBullet()) 
+            {
+                if (obstacle->getType() == EntityType::Enemy) continue; // Enemy bullets ignore enemies
+            }
+            else
+                if (obstacle->getType() == EntityType::Player) continue; // Player bullets ignore player
 
             if (bullet->getHitbox().intersection(obstacle->getHitbox()))
             {
-				bullet->deactivate(); // Collision detected, deactivate bullet
+                bullet->deactivate(); // Collision detected, deactivate bullet
+
+                // Handles the different bullet types
+				if (bullet->isEnemyBullet()) // Enemy bullet
+                {
+					// Damages player upon being hit by enemy bullet
+                    if (obstacle->getType() == EntityType::Player)
+                        std::cout << "Player Hit!" << std::endl; // PLAYER HEALTH NEEDS IMPLEMENTING
+
+                }
+				else // Player bullet
+                {
+					// Destroys enemy upon being hit by player bullet
+                    if (obstacle->getType() == EntityType::Enemy) 
+                    {
+                        Enemy* enemy = dynamic_cast<Enemy*>(obstacle.get());
+                        if (enemy)
+                        {
+							enemy->takeDamage(1); // Deals 1 damage to the enemy
+
+							// Check if their health is 0 or below - destroys them and adds 5 score if so
+                            if (enemy->getHealth() <= 0)
+                            {
+                                obstacle->destroy();
+                                m_score += 5;
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -202,7 +271,10 @@ void Simulation::update(float deltaTime)
     {
 		// Marks collectables for destruction upon collision with player
         if (entity->getType() == EntityType::Collectable && playerHitbox.intersection(entity->getHitbox()))
+        {
+            m_score += 1; // Increments the score variable
             entity->destroy();
+        }
     }
 
 	// Trigger Collision

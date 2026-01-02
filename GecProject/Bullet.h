@@ -11,14 +11,17 @@ public:
     }
 
     // Sets the bullet up when its been fired - activated
-    void fire(sf::Vector2f position, sf::Vector2f velocity)
+    void fire(sf::Vector2f position, sf::Vector2f velocity, bool isEnemy = false)
     {
         m_active = true;
         this->setPosition(position);
         m_velocity = velocity;
         m_lifetime = 3.f;    // Reset the timer
         this->syncHitbox();  // Ensure hitbox is at the new position immediately
+		m_isEnemyBullet = isEnemy; // Used to differentiate between player and enemy bullets, for collisions
     }
+
+	bool isEnemyBullet() const { return m_isEnemyBullet; } // Checks if the bullet was fired by an enemy
 
 	// Used to deactivate the bullet when its lifetime is over or it hits something
     void deactivate()
@@ -42,4 +45,5 @@ public:
 private:
     float m_lifetime{ 3.f }; // How long the bullet will last before being deactivated
     bool m_active{ false };
+    bool m_isEnemyBullet{ false }; // Used to differentiate between player and enemy bullets, for collisions
 };
