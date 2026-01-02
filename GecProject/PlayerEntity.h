@@ -9,6 +9,7 @@ public:
 	void update(float deltaTime) override;
 	void handleInput(const std::vector<Actions>& actions);
 
+	bool tryShoot(sf::Vector2f& direction, bool& facingRight);
 	bool isFacingRight() const { return !m_flipped; }
 private:
 	float m_speed{ 75.f }; // Defines the speed of the player

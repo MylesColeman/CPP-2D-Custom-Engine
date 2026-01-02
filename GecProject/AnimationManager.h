@@ -54,6 +54,9 @@ public:
 		setAnimationPivot("playerStandingShot", { spineX, spineY });
 
 		// Statics
+		// Bullet
+		configureStaticSprite("bulletSprite", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 198, 126 }, { 10, 10 }));
+
 		// World
 		configureStaticSprite("TopEdgelessFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 36, 18 }, { 18, 18 }));
 	}

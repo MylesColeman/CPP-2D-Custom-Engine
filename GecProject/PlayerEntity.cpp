@@ -106,27 +106,6 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 		}
 	}
 
-	if (m_wantsToShoot)
-	{
-		if (m_shootCooldownTimer <= 0.f)
-		{
-			m_wantsToShoot = false;
-			m_shootCooldownTimer = m_shootCooldown; // Sets a cooldown of 0.5 seconds between shots
-
-			std::string dirString = isFacingRight() ? "RIGHT" : "LEFT";
-			std::string angleString = "STRAIGHT";
-
-			if (m_isLookingUp) angleString = "Up";
-			if (m_isLookingDown) angleString = "Down";
-
-			std::cout << "BANG! Firing " << dirString << " at " << angleString << std::endl;
-		}
-		else
-		{
-			m_wantsToShoot = false; // Still on cooldown
-		}
-	}
-
 	if (m_grounded && isJumping && !m_wasJumping)
 	{
 		m_velocity.y = m_jumpHeight; // Sets a negative y velocity to make the player jump
@@ -137,4 +116,26 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 		m_velocity.y *= 0.5f;
 
 	m_wasJumping = isJumping; // Updates the wasJumping flag for the next frame
+}
+
+bool PlayerEntity::tryShoot(sf::Vector2f& direction, bool& facingRight)
+{
+	if (m_wantsToShoot && m_shootCooldownTimer <= 0.f)
+	{
+		m_shootCooldownTimer = m_shootCooldown; // Sets a cooldown of 0.5 seconds between shots
+		m_wantsToShoot = false;
+
+		float xDir = isFacingRight() ? 1.f : -1.f;
+		float yDir = 0.f;
+
+		if (m_isLookingUp) yDir = -1.f;
+		if (m_isLookingDown) yDir = 1.f;
+
+		direction = { xDir, yDir };
+		facingRight = isFacingRight();
+
+		return true;
+	}
+
+	return false; // Didn't shoot
 }

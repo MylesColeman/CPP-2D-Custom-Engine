@@ -1,5 +1,6 @@
 #include "Simulation.h"
 #include "DynamicEntity.h"
+#include "Bullet.h"
 
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
@@ -39,6 +40,23 @@ void Simulation::update(float deltaTime)
 {
     m_inputManager.update();
 
+    sf::Vector2f shootDir;
+    bool facingRight;
+
+    if (m_player->tryShoot(shootDir, facingRight))
+    {
+        // Create Bullet
+        const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
+
+        auto bullet = std::make_unique<Bullet>(bulletSprite, shootDir * 400.f);
+
+        sf::Vector2f spawnPos = m_player->getPosition();
+        spawnPos.y -= 5.f;
+        bullet->setPosition(spawnPos);
+
+        m_newEntities.push_back(std::move(bullet));
+    }
+
     // Loops through all entities and updates them
     for (auto& entity : m_entities)
     {
@@ -61,6 +79,8 @@ void Simulation::update(float deltaTime)
 			// Skips self-collision & collectable collision
             if (wall.get() == dynamicEntity) continue;          
             if (wall->getType() == EntityType::Collectable) continue;
+            if (wall->getType() == EntityType::Player) continue;
+            if (wall->getType() == EntityType::Bullet) continue;
                 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle wallCheck = entityHitbox;
@@ -99,6 +119,8 @@ void Simulation::update(float deltaTime)
             // Skips self-collision & collectable collision
             if (floor.get() == dynamicEntity) continue;
             if (floor->getType() == EntityType::Collectable) continue;
+            if (floor->getType() == EntityType::Player) continue;
+            if (floor->getType() == EntityType::Bullet) continue;
 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle floorCheck = entityHitbox;
@@ -150,6 +172,15 @@ void Simulation::update(float deltaTime)
     {
         // None currently implemented
 	}
+
+    if (!m_newEntities.empty())
+    {
+        for (auto& newEnt : m_newEntities)
+        {
+            m_entities.push_back(std::move(newEnt));
+        }
+        m_newEntities.clear();
+    }
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());

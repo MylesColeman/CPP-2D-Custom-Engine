@@ -50,5 +50,7 @@ private:
 
     sf::Vector2f m_levelSize{ 500.f, 500.f };
 
+    std::vector<std::unique_ptr<Entity>> m_newEntities;
+
     int m_score{ 0 };
 };

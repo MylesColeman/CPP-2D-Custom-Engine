@@ -92,6 +92,9 @@
     <ClInclude Include="DynamicEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\Milestone Devlog.txt" />
