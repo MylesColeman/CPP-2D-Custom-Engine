@@ -3,6 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+// Enum to track the current game state
+enum class GameState
+{
+	Frontend,
+	Ingame,
+	Endgame
+};
+
 class Graphics
 {
 public:
@@ -13,6 +21,8 @@ private:
 	void resizeView(const sf::Window& window, sf::View& view); // Resizes the view when the window is resized
 	void update(float deltaTime); // Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 	void render(); // The actual logic behind displaying the sprite to the window
+
+	void initUI(); // Helper function to initialise UI (fonts, styles, etc.)
 
 	sf::RenderWindow m_window;
 	sf::View m_gameView;
@@ -31,4 +41,11 @@ private:
 	sf::Clock m_frameClock;
 	int m_frameCount{ 0 };
 	float m_fps{ 0.0f };
+
+	GameState m_state{ GameState::Frontend }; // Tracks the current game state
+
+	sf::Font m_font;
+	sf::Text m_titleText;
+	sf::Text m_instructionText; // Press Space to Start
+	sf::Text m_scoreText;
 };

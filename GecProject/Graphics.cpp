@@ -21,7 +21,10 @@ void DefineGUI(float fps)
 Graphics::Graphics() :
     m_window(sf::VideoMode::getDesktopMode(), "GEC Start Project", sf::Style::Default),
 	m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })), // Sets the game view to a more readable resolution
-	m_simulation(m_textureManager)
+    m_simulation(m_textureManager),
+    m_titleText(m_font),
+    m_instructionText(m_font),
+    m_scoreText(m_font)
 {
 	m_window.setPosition({ 0, 0 }); // Sets the window position to the top-left of the screen
 
@@ -33,6 +36,40 @@ Graphics::Graphics() :
     // Set up ImGui (the UI library)
     if (!ImGui::SFML::Init(m_window)) 
         std::cout << "ImGUI could not be loaded!" << std::endl;
+
+    initUI();
+}
+
+void Graphics::initUI()
+{
+    // Loading the font
+    if (!m_font.openFromFile("Data/arial.ttf"))
+        std::cout << "ERROR: Could not load Data/arial.ttf" << std::endl;
+
+    // Title Text
+    m_titleText.setFont(m_font);
+    m_titleText.setCharacterSize(20);
+    m_titleText.setFillColor(sf::Color::White);
+    m_titleText.setString("GEC GAME");
+
+    sf::FloatRect titleRect = m_titleText.getLocalBounds();
+	m_titleText.setOrigin({ titleRect.size.x / 2.0f, titleRect.size.y / 2.0f }); // Centres the origin
+	m_titleText.setPosition({ 160.f, 50.f }); // Positions the title at the top centre of the screen
+
+	// Instruction Text (Press Space to Start)
+    m_instructionText.setFont(m_font);
+    m_instructionText.setCharacterSize(10);
+    m_instructionText.setFillColor(sf::Color::Yellow);
+    m_instructionText.setString("Press SPACE to Start");
+
+    sf::FloatRect instrRect = m_instructionText.getLocalBounds();
+	m_instructionText.setOrigin({ instrRect.size.x / 2.0f, instrRect.size.y / 2.0f }); // Centres the origin
+	m_instructionText.setPosition({ 160.f, 100.f }); // Positions the instruction below the title
+
+	// Score Text
+    m_scoreText.setFont(m_font);
+    m_scoreText.setCharacterSize(12);
+    m_scoreText.setFillColor(sf::Color::Green);
 }
 
 // Will be called in main, running all the graphics/display logic
@@ -44,12 +81,46 @@ void Graphics::display()
         float deltaTime = m_deltaClock.restart().asSeconds(); // Calculates the delta time for each loop
         windowEvents();
 
-		// Fixed timestep physics update loop
-        m_accumulator += deltaTime;
-        while (m_accumulator >= m_fixedTimestep)
+		// Game State Management
+        if (m_state == GameState::Frontend) // Frontend State
         {
-			m_simulation.update(m_fixedTimestep); // Update the simulation with a fixed timestep
-			m_accumulator -= m_fixedTimestep; // Decrease the accumulator by the fixed timestep
+			// Begins the game on space key press
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+            {
+				m_simulation.reset(); // Ensures everything is reset for the start of the game
+                m_state = GameState::Ingame;
+            }
+        }
+		else if (m_state == GameState::Ingame) // Ingame State
+        {
+            // Fixed timestep physics update loop
+            m_accumulator += deltaTime;
+            while (m_accumulator >= m_fixedTimestep)
+            {
+                m_simulation.update(m_fixedTimestep); // Update the simulation with a fixed timestep
+                m_accumulator -= m_fixedTimestep; // Decrease the accumulator by the fixed timestep
+            }
+
+			// Check for death condition
+            if (m_simulation.isGameOver())
+            {
+                m_state = GameState::Endgame; // Switch to endgame state
+
+				m_scoreText.setString("Final Score: " + std::to_string(m_simulation.getScore())); // Updates the score text
+
+                sf::FloatRect scoreRect = m_scoreText.getLocalBounds();
+                m_scoreText.setOrigin({ scoreRect.size.x / 2.0f, scoreRect.size.y / 2.0f });
+                m_scoreText.setPosition({ 160.f, 80.f });
+            }
+        }
+		else if (m_state == GameState::Endgame) // Endgame State
+        {
+            // Restarts the game on space key press
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+            {
+				m_simulation.reset(); // Ensures everything is reset for the start of the game
+                m_state = GameState::Ingame;
+            }
         }
 
         update(deltaTime);
@@ -136,56 +207,83 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
-	// Logic behind camera movement which follows the player
-    if (m_simulation.getPlayer())
+	// Only renders if in the ingame state or the Endgame state
+    if (m_state == GameState::Ingame || m_state == GameState::Endgame)
     {
-        sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
-        
-		sf::Vector2f levelSize = m_simulation.getLevelSize();
-        float levelWidth = levelSize.x;
-        float levelHeight = levelSize.y;
-
-        // Defining the camera bounds
-        // X
-        float minX = m_gameView.getSize().x / 2.f;
-        float maxX = levelWidth - minX;
-
-        // Y
-        float minY = m_gameView.getSize().y / 2.f;
-        float maxY = levelHeight - minY;
-
-        // Clamping the camera to the level bounds
-        // X
-        if (playerPos.x < minX) playerPos.x = minX;
-        else if (playerPos.x > maxX) playerPos.x = maxX;
-
-        // Y
-        if (playerPos.y < minY) playerPos.y = minY;
-        else if (playerPos.y > maxY) playerPos.y = maxY;
-
-        // Applying the new clamped camera position
-        m_gameView.setCenter(playerPos);
-    }
-
-	m_window.setView(m_gameView); // Updates the view
-
-    // Loops through the vector of entities created in the simulation, and draws them
-    for (const auto& entity : m_simulation.getEntities())
-        m_window.draw(*entity);
-
-    // Loops through the bullets and draws them
-    for (const auto& bullet : m_simulation.getBullets())
-    {
-		// Only draws the bullet if its active
-        if (bullet->isActive())
+        // Logic behind camera movement which follows the player
+        if (m_simulation.getPlayer())
         {
-            m_window.draw(*bullet);
+            sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
+
+            sf::Vector2f levelSize = m_simulation.getLevelSize();
+            float levelWidth = levelSize.x;
+            float levelHeight = levelSize.y;
+
+            // Defining the camera bounds
+            // X
+            float minX = m_gameView.getSize().x / 2.f;
+            float maxX = levelWidth - minX;
+
+            // Y
+            float minY = m_gameView.getSize().y / 2.f;
+            float maxY = levelHeight - minY;
+
+            // Clamping the camera to the level bounds
+            // X
+            if (playerPos.x < minX) playerPos.x = minX;
+            else if (playerPos.x > maxX) playerPos.x = maxX;
+
+            // Y
+            if (playerPos.y < minY) playerPos.y = minY;
+            else if (playerPos.y > maxY) playerPos.y = maxY;
+
+            // Applying the new clamped camera position
+            m_gameView.setCenter(playerPos);
         }
+
+        m_window.setView(m_gameView); // Updates the view
+
+        // Loops through the vector of entities created in the simulation, and draws them
+        for (const auto& entity : m_simulation.getEntities())
+            m_window.draw(*entity);
+
+        // Loops through the bullets and draws them
+        for (const auto& bullet : m_simulation.getBullets())
+        {
+            // Only draws the bullet if its active
+            if (bullet->isActive())
+                m_window.draw(*bullet);
+        }
+
+        // Debugging hitbox visualisers
+        for (auto& pair : m_simulation.m_triggerColliders)
+            m_window.draw(m_simulation.m_triggerHitboxVisualiser);
     }
 
-	// Debugging hitbox visualisers
-    for (auto& pair : m_simulation.m_triggerColliders)
-        m_window.draw(m_simulation.m_triggerHitboxVisualiser);
+	// UI View
+	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, { 320.f, 180.f })); // Sets the UI view to a fixed resolution
+    m_window.setView(uiView);
+
+	// Frontend & Endgame Screens
+	if (m_state == GameState::Frontend) // Frontend State
+    {
+        m_titleText.setString("GEC GAME");
+        m_titleText.setFillColor(sf::Color::White);
+        m_instructionText.setString("Press SPACE to Start");
+
+        m_window.draw(m_titleText);
+        m_window.draw(m_instructionText);
+    }
+	else if (m_state == GameState::Endgame) // Endgame State
+    {
+        m_titleText.setString("GAME OVER");
+        m_titleText.setFillColor(sf::Color::Red);
+        m_instructionText.setString("Press SPACE to Restart");
+
+        m_window.draw(m_titleText);
+        m_window.draw(m_scoreText);
+        m_window.draw(m_instructionText);
+    }
 
     // UI needs drawing last
     ImGui::SFML::Render(m_window);

@@ -17,6 +17,10 @@ class Simulation
 {
 public:
     Simulation(TextureManager& textureManager);
+
+	void reset(); // Resets the simulation to its initial state
+	bool isGameOver() const; // Checks whether the game is over (player health <= 0)
+
     void update(float deltaTime); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
     sf::Vector2f getLevelSize() const { return m_levelSize; }
@@ -25,6 +29,8 @@ public:
     const std::vector<std::unique_ptr<Entity>>& getEntities() const { return m_entities; }
 
 	const PlayerEntity* getPlayer() const { return m_player; } //  Getter for the player entity, for use in graphics
+
+    int getScore() const { return m_score; } // For use in the graphics (game over screen)
 
 	// Colliders
     std::vector<CollisionRectangle> m_solidColliders;

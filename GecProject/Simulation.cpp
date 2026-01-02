@@ -3,19 +3,31 @@
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
-	m_levelSize = { 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
+    reset();
+}
+
+void Simulation::reset()
+{
+	// Clears existing entities and bullets
+    m_entities.clear();
+    m_bulletPool.clear();
+    m_score = 0;
+	m_player = nullptr; // Resets player pointer
+
+    m_levelSize = { 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
 
     // Adding entities to the entity vector, and setting up the animations for them
-	// Player
+    // Player
     auto player = std::make_unique<PlayerEntity>(m_animationManager);
     m_player = player.get();
     m_entities.push_back(std::move(player));
     m_player->setPosition({ 25.f, 50.f });
-	m_inputManager.addListener(m_player); // Adds the player as an input listener
+    m_inputManager = InputManager();
+    m_inputManager.addListener(m_player); // Adds the player as an input listener
 
     // Bullet Pool
     const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
-	// Pre-create a pool of bullets
+    // Pre-create a pool of bullets
     for (int i = 0; i < 20; ++i)
     {
         m_bulletPool.push_back(std::make_unique<Bullet>(bulletSprite));
@@ -27,7 +39,7 @@ Simulation::Simulation(TextureManager& textureManager) :
     enemy->setTarget(m_player); // Sets the player as the enemy's target
     m_entities.push_back(std::move(enemy));
 
-	// Collectable
+    // Collectable
     auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
     collectable->setPosition({ 0.f, 90.f });
     m_entities.push_back(std::move(collectable));
@@ -46,6 +58,12 @@ Simulation::Simulation(TextureManager& textureManager) :
 
         m_entities.push_back(std::move(floor));
     }
+}
+
+bool Simulation::isGameOver() const
+{
+    if (!m_player) return true;
+    return m_player->getHealth() <= 0;
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
