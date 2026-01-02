@@ -3,15 +3,17 @@
 #include "CollisionRectangle.h"
 #include <SFML/Graphics.hpp>
 
+// Used to differentiate between different entity types within the game world, primarily for collision handling
 enum class EntityType
 {
     Standard,
     Player,
-    Collectable
+    Collectable,
+    Bullet
 };
 
 // Our base class for entities within our game world, inherits from sf::Sprite to allow easy drawing and manipulation of sprites
-// Other classes can inherit from this to create more specific entity types - such as a player, ai, pickup etc
+// Other classes can inherit from this to create more specific entity types - such as dynamic entities affected by physics
 class Entity : public sf::Sprite
 {
 public:
@@ -49,25 +51,26 @@ public:
     {
         m_animation = &animation;
         this->setTexture(*m_animation->texture, true);
-        m_currentFrame = 0;
+		m_currentFrame = 0; // Resets to the first frame
         m_animClock.restart();
-        m_isAnimated = true;
+		m_isAnimated = true; // Sets the entity as animated, not static
 
         // Calculates and sets the intRect for the first frame. Otherwise the entire spritesheet would be shown till it was set in update
         int intRectsYPos = m_currentFrame * m_animation->spriteHeight;
+
+		// Checks whether the sprite is flipped or not to set the origin and intRect correctly
         if (!m_flipped)
         {
             // Face Right (Normal)
             this->setOrigin(m_animation->pivot);
-            
             this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
         }
         else
         {
             // Face Left (Flipped)
             float flippedPivotX = m_animation->spriteWidth - m_animation->pivot.x;
+
             this->setOrigin({ flippedPivotX, m_animation->pivot.y });
-            
             // Start X at width, and use negative width to flip
             this->setTextureRect(sf::IntRect({ m_animation->spriteWidth, intRectsYPos }, { -m_animation->spriteWidth, m_animation->spriteHeight }));
         }
@@ -95,6 +98,7 @@ public:
             /* Updates the intRect, as all sprite sheets are composed vertically 'x' can remain as 0 but 'y' is updated based on the calculation above.The size
                  is calculated using the spriteWidth and spriteHeight variables from the Animation struct */
             int intRectsYPos = m_currentFrame * m_animation->spriteHeight; // Sets the intRect's Y position based on the current frame 
+			// Sets the origin and intRect based on whether the sprite is flipped or not
             if (!m_flipped)
             {
                 this->setOrigin(m_animation->pivot);
@@ -121,7 +125,7 @@ public:
 
     void destroy() { m_destroy = true; } // Sets the entity to be destroyed
 
-    bool getDestroy() const { return m_destroy; }
+	bool getDestroy() const { return m_destroy; } // Returns whether the entity is marked for destruction
     EntityType getType() const { return m_type; } 
 	const CollisionRectangle& getHitbox() const { return m_hitbox; } // Returns the hitbox of the entity for collision detection
 
@@ -129,6 +133,7 @@ protected:
     const Animation* m_animation{ nullptr };
     EntityType m_type;
     CollisionRectangle m_hitbox; // The hitbox for the entity, used for collision detection
+
     bool m_destroy{ false };
 
     bool m_flipped{ false };
@@ -136,6 +141,5 @@ protected:
 private:
     sf::Clock m_animClock;
     int m_currentFrame{ 0 };
-
     bool m_isAnimated{ false };
 };

@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Collectable.h" />
     <ClInclude Include="DynamicEntity.h" />
     <ClInclude Include="ExternalHeaders.h" />
