@@ -48,7 +48,7 @@ void Simulation::update(float deltaTime)
         // Create Bullet
         const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
 
-        auto bullet = std::make_unique<Bullet>(bulletSprite, shootDir * 400.f);
+        auto bullet = std::make_unique<Bullet>(bulletSprite, shootDir * 250.f);
 
         sf::Vector2f spawnPos = m_player->getPosition();
         spawnPos.y -= 5.f;
@@ -90,6 +90,12 @@ void Simulation::update(float deltaTime)
             // Wall Collisions
             if (wallCheck.intersection(wall->getHitbox()))
             {
+                if (dynamicEntity->getType() == EntityType::Bullet)
+                {
+                    dynamicEntity->destroy();
+                    break; // Stop checking other walls, bullet is dead
+                }
+
                 sf::Vector2f pos = dynamicEntity->getPosition();
                 float halfWidth = entityHitbox.m_width / 2.f;
 
@@ -108,6 +114,8 @@ void Simulation::update(float deltaTime)
                 dynamicEntity->syncHitbox();
             }
         }
+
+        if (dynamicEntity->getDestroy()) continue; // If the bullet's already been destroyed, skip further checks
 
         // Y
         dynamicEntity->move({ 0.f, velocity.y * deltaTime });
@@ -130,6 +138,12 @@ void Simulation::update(float deltaTime)
             // Floor Collisions
             if (floorCheck.intersection(floor->getHitbox()))
             {
+                if (dynamicEntity->getType() == EntityType::Bullet)
+                {
+                    dynamicEntity->destroy();
+					break; // Stop checking other floors, bullet is dead
+                }
+
                 sf::Vector2f pos = dynamicEntity->getPosition();
                 float halfHeight = entityHitbox.m_height / 2.f;
 

@@ -79,6 +79,8 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 	m_isLookingUp = false;
 	m_isLookingDown = false;
 
+	bool isShootKeyDown = false;
+
 	for (const Actions& action : actions) // Loops through all actions to handle multiple inputs
 	{
 		switch (action)
@@ -99,12 +101,14 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 			m_isLookingDown = true;
 			break;
 		case Actions::eShoot:
-			m_wantsToShoot = true;
+			isShootKeyDown = true;
 			break;
 		default:
 			break;
 		}
 	}
+
+	m_wantsToShoot = isShootKeyDown;
 
 	if (m_grounded && isJumping && !m_wasJumping)
 	{
