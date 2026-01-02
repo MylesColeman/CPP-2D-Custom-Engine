@@ -3,7 +3,7 @@
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
-    m_levelSize = { 500.f, 500.f };
+	m_levelSize = { 500.f, 500.f }; // Defines the size of the level. Temporary solution
 
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
@@ -11,15 +11,17 @@ Simulation::Simulation(TextureManager& textureManager) :
     m_player = player.get();
     m_entities.push_back(std::move(player));
     m_player->setPosition({ 25.f, 50.f });
-    m_inputManager.addListener(m_player);
+	m_inputManager.addListener(m_player); // Adds the player as an input listener
 
     // Bullet Pool
     const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
+	// Pre-create a pool of bullets
     for (int i = 0; i < 15; ++i)
     {
         m_bulletPool.push_back(std::make_unique<Bullet>(bulletSprite));
     }
 
+	// Collectable
     auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
     collectable->setPosition({ 0.f, 90.f });
     m_entities.push_back(std::move(collectable));
@@ -48,17 +50,18 @@ void Simulation::update(float deltaTime)
     sf::Vector2f shootDir;
     bool facingRight;
 
+	// Handle shooting
     if (m_player->tryShoot(shootDir, facingRight))
     {
         sf::Vector2f spawnPos = m_player->getPosition();
-        spawnPos.y -= 5.f; // Adjust to gun height
+        spawnPos.y -= 10.f; // Adjust to gun height to better match player sprite (the gun)
 
         // Find the first sleeping bullet and fire it
         for (auto& bullet : m_bulletPool)
         {
             if (!bullet->isActive())
             {
-                bullet->fire(spawnPos, shootDir * 250.f);
+				bullet->fire(spawnPos, shootDir * 250.f); // Multiplies direction by speed
                 break; // We fired one, stop looking
             }
         }
@@ -71,7 +74,7 @@ void Simulation::update(float deltaTime)
 
 		DynamicEntity* dynamicEntity = dynamic_cast<DynamicEntity*>(entity.get());
 
-        if (dynamicEntity == nullptr) continue; // Skips if not dynamic
+		if (dynamicEntity == nullptr) continue; // Skips if not dynamic, as only dynamic entities need collision handling
 
 		sf::Vector2f velocity = dynamicEntity->getVelocity();
 
@@ -83,7 +86,7 @@ void Simulation::update(float deltaTime)
 
         for (const auto& wall : m_entities)
         {
-			// Skips self-collision & collectable collision
+			// Skips self-collision, collectable collision and player collision
             if (wall.get() == dynamicEntity) continue;          
             if (wall->getType() == EntityType::Collectable) continue;
             if (wall->getType() == EntityType::Player) continue;
@@ -163,9 +166,10 @@ void Simulation::update(float deltaTime)
         }
     }
 
+	// Bullet Collision - Is separate as bullets are not recognised as entities in the main entity vector
     for (auto& bullet : m_bulletPool)
     {
-        if (!bullet->isActive()) continue;
+		if (!bullet->isActive()) continue; // Only checks active bullets
 
 		bullet->update(deltaTime); // Ensures the bullet is deactivated after its lifetime
 
@@ -193,6 +197,7 @@ void Simulation::update(float deltaTime)
 	// Collectable Collision
     for (auto& entity : m_entities)
     {
+		// Marks collectables for destruction upon collision with player
         if (entity->getType() == EntityType::Collectable && playerHitbox.intersection(entity->getHitbox()))
             entity->destroy();
     }

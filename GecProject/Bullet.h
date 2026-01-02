@@ -28,6 +28,7 @@ public:
 
 	bool isActive() const { return m_active; } // Checks if the bullet is currently active
 
+	// Deactivates the bullet after its lifetime is over
     void update(float deltaTime) override
     {
         m_lifetime -= deltaTime;
@@ -36,7 +37,7 @@ public:
 			deactivate();
         }
 
-        DynamicEntity::update(deltaTime);
+        DynamicEntity::update(deltaTime); // Calls the base class update to handle animation and movement
     }
 private:
     float m_lifetime{ 3.f }; // How long the bullet will last before being deactivated

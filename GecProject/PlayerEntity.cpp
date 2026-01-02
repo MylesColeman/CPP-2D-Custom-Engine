@@ -23,10 +23,13 @@ void PlayerEntity::update(float deltaTime)
 		this->flipSprite(false);
 
 	// Animation Setter
+	// Checks whether the player is shooting, to decide which set of animations to use
 	if (m_shootCooldownTimer > 0.f)
 	{
+		// Checks whether the player is on the ground or in the air
 		if (m_grounded)
 		{
+			// Checks whether the player is moving or standing still
 			if (m_velocity.x != 0)
 			{
 				if (m_animation != m_playerWalkShot)
@@ -44,10 +47,12 @@ void PlayerEntity::update(float deltaTime)
 				this->setAnimation(*m_playerJumpShot);
 		}
 	}
-	else
+	else // Not shooting
 	{
+		// Checks whether the player is on the ground or in the air
 		if (m_grounded)
 		{
+			// Checks whether the player is moving or standing still
 			if (m_velocity.x != 0)
 			{
 				if (m_animation != m_playerWalk)
@@ -69,6 +74,7 @@ void PlayerEntity::update(float deltaTime)
 	DynamicEntity::update(deltaTime); // Calls the base class update to handle animation and movement
 }
 
+// Handles player input based on the provided actions
 void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 {
 	m_velocity.x = 0.f; // Resets the velocity to zero each frame, so the player stops moving when no keys are pressed
@@ -78,6 +84,7 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 	m_isLookingUp = false;
 	m_isLookingDown = false;
 
+	// Resets the shooting state each frame
 	bool isShootKeyDown = false;
 
 	for (const Actions& action : actions) // Loops through all actions to handle multiple inputs
@@ -94,39 +101,43 @@ void PlayerEntity::handleInput(const std::vector<Actions>& actions)
 			isJumping = true; // Sets the jumping flag to true
 			break;
 		case Actions::eLookUp:
-			m_isLookingUp = true;
+			m_isLookingUp = true; // Sets the looking up flag to true
 			break;
 		case Actions::eLookDown:
-			m_isLookingDown = true;
+			m_isLookingDown = true; // Sets the looking down flag to true
 			break;
 		case Actions::eShoot:
-			isShootKeyDown = true;
+			isShootKeyDown = true; // Sets the shooting flag to true
 			break;
 		default:
 			break;
 		}
 	}
 
-	m_wantsToShoot = isShootKeyDown;
+	m_wantsToShoot = isShootKeyDown; // Updates the wantsToShoot flag based on whether the shoot key is down
 
+	// Prevents the player from holding the jump key, to keep jumping
 	if (m_grounded && isJumping && !m_wasJumping)
 	{
 		m_velocity.y = m_jumpHeight; // Sets a negative y velocity to make the player jump
 		m_grounded = false;
 	}
 
+	// Variable jump height: if the player releases the jump key while going up, reduces the y velocity
 	if (m_velocity.y < 0 && !isJumping)
 		m_velocity.y *= 0.5f;
 
 	m_wasJumping = isJumping; // Updates the wasJumping flag for the next frame
 }
 
+// Attempts to shoot a projectile, returns true if successful
 bool PlayerEntity::tryShoot(sf::Vector2f& direction, bool& facingRight)
 {
+	// Checks whether the player wants to shoot and if the cooldown timer has elapsed
 	if (m_wantsToShoot && m_shootCooldownTimer <= 0.f)
 	{
 		m_shootCooldownTimer = m_shootCooldown; // Sets a cooldown of 0.5 seconds between shots
-		m_wantsToShoot = false;
+		m_wantsToShoot = false; // Resets the wantsToShoot flag
 
 		float xDir = isFacingRight() ? 1.f : -1.f;
 		float yDir = 0.f;

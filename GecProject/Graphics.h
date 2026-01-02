@@ -23,8 +23,9 @@ private:
 	sf::Clock m_uiDeltaClock; // Used by ImGui for updating
 	sf::Clock m_deltaClock; // Used for calculating delta time between frames
 
-	float m_accumulator{ 0.f };
-	const float m_fixedTimestep{ 1.f / 60.f };
+	// Used for the physics update loop
+	float m_accumulator{ 0.f }; // Accumulates delta time
+	const float m_fixedTimestep{ 1.f / 60.f }; // Fixed timestep of 60 FPS, ensuring consistent physics updates
 
 	// FPS counter variables
 	sf::Clock m_frameClock;

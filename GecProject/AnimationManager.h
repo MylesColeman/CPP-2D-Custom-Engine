@@ -38,6 +38,7 @@ public:
 		configureAnimation("playerWalk", "Data/Textures/Player/skeleton_walk.png", 6);
 		configureAnimation("playerWalkShot", "Data/Textures/Player/skeleton_walkShot.png", 8, 0.0625f);
 
+		// Setting the pivot point of sprites that flip
 		float spineX = 6.5f;
 		float spineY = m_animations["playerIdle"].spriteHeight / 2.f;
 		setAnimationPivot("playerIdle", { spineX, spineY });
@@ -79,7 +80,7 @@ public:
 		anim.spriteWidth = texture->getSize().x;
 		anim.spriteHeight = texture->getSize().y / frameCount;
 		anim.timeBetweenFrames = animSpeed;
-		anim.pivot = { anim.spriteWidth / 2.f, anim.spriteHeight / 2.f };
+		anim.pivot = { anim.spriteWidth / 2.f, anim.spriteHeight / 2.f }; // Sets the default pivot to be the centre of the sprite
 
 		m_animations[animName] = anim;
 	}
@@ -103,23 +104,15 @@ public:
 	}
 
 	// Used to access the animation in other scripts
-	const Animation& getAnimation(const std::string& animName) const
-	{
-		return m_animations.at(animName);
-	}
+	const Animation& getAnimation(const std::string& animName) const { return m_animations.at(animName); }
+
 	// Used to access the sprite in other scripts
-	const StaticSprite& getStaticSprite(const std::string& spriteName) const
-	{
-		return m_staticSprites.at(spriteName);
-	}
+	const StaticSprite& getStaticSprite(const std::string& spriteName) const { return m_staticSprites.at(spriteName); }
 
 	// Used to manually alter the pivor point of an animation
 	void setAnimationPivot(const std::string& animName, sf::Vector2f newPivot)
 	{
-		if (m_animations.count(animName))
-		{
-			m_animations[animName].pivot = newPivot;
-		}
+		if (m_animations.count(animName)) { m_animations[animName].pivot = newPivot; }
 	}
 private:
 	TextureManager& m_textureManager;

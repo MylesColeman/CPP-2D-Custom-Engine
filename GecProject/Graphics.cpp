@@ -20,14 +20,14 @@ void DefineGUI(float fps)
 // Sets up the window and the simulation
 Graphics::Graphics() :
     m_window(sf::VideoMode::getDesktopMode(), "GEC Start Project", sf::Style::Default),
-    m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })),
+	m_gameView(sf::FloatRect({ 0.f, 0.f }, { 320, 180 })), // Sets the game view to a more readable resolution
 	m_simulation(m_textureManager)
 {
-    m_window.setPosition({ 0, 0 });
+	m_window.setPosition({ 0, 0 }); // Sets the window position to the top-left of the screen
 
     m_window.setVerticalSyncEnabled(true); // Enables VSync to limit FPS
 
-    resizeView(m_window, m_gameView);
+    resizeView(m_window, m_gameView); // Resizes the view to fit the window
     m_window.setView(m_gameView); // Sets the game view to a more readable resolution
 
     // Set up ImGui (the UI library)
@@ -44,11 +44,12 @@ void Graphics::display()
         float deltaTime = m_deltaClock.restart().asSeconds(); // Calculates the delta time for each loop
         windowEvents();
 
+		// Fixed timestep physics update loop
         m_accumulator += deltaTime;
         while (m_accumulator >= m_fixedTimestep)
         {
-            m_simulation.update(m_fixedTimestep);
-            m_accumulator -= m_fixedTimestep;
+			m_simulation.update(m_fixedTimestep); // Update the simulation with a fixed timestep
+			m_accumulator -= m_fixedTimestep; // Decrease the accumulator by the fixed timestep
         }
 
         update(deltaTime);
@@ -71,6 +72,7 @@ void Graphics::windowEvents()
         if (event->is<sf::Event::Closed>())
             m_window.close();
 
+		// Window resized - adjust the view accordingly
         if (const auto* resized = event->getIf<sf::Event::Resized>())
         {
             resizeView(m_window, m_gameView);
@@ -79,19 +81,21 @@ void Graphics::windowEvents()
     }
 }
 
+// Resizes the view when the window is resized
 void Graphics::resizeView(const sf::Window& window, sf::View& view)
 {
-    float windowRatio = window.getSize().x / (float)window.getSize().y;
-	float viewRatio = view.getSize().x / (float)view.getSize().y;
+	float windowRatio = window.getSize().x / (float)window.getSize().y; // Aspect ratio of the window
+	float viewRatio = view.getSize().x / (float)view.getSize().y; // Aspect ratio of the view
     float xSize = 1.f;
 	float ySize = 1.f;
     float xPos = 0.f;
     float yPos = 0.f;
 
 	bool horizontalSpacing = true;
-    if (windowRatio < viewRatio)
+	if (windowRatio < viewRatio) // Window is taller than the view
 		horizontalSpacing = false;
 
+	// Adjust the viewport - adding black bars where necessary
     if (horizontalSpacing)
     {
 		xSize = viewRatio / windowRatio;
@@ -103,7 +107,7 @@ void Graphics::resizeView(const sf::Window& window, sf::View& view)
 		yPos = (1.f - ySize) / 2.f;
     }
 
-    view.setViewport(sf::FloatRect({ xPos, yPos }, { xSize, ySize }));
+	view.setViewport(sf::FloatRect({ xPos, yPos }, { xSize, ySize })); // Sets the new viewport
 }
 
 // Handles the graphical updating of the simulation, which in turn handles the graphical updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
@@ -118,7 +122,7 @@ void Graphics::update(float deltaTime)
     if (m_frameClock.getElapsedTime().asSeconds() >= 1.0f)
     {
         m_fps = static_cast<float>(m_frameCount) / m_frameClock.getElapsedTime().asSeconds();
-        m_frameCount = 0;
+		m_frameCount = 0; // Resets the frame count
         m_frameClock.restart();
     }
 }
@@ -132,12 +136,13 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
+	// Logic behind camera movement which follows the player
     if (m_simulation.getPlayer())
     {
         sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
         
 		sf::Vector2f levelSize = m_simulation.getLevelSize();
-        float levelWidth = levelSize.x; // Need to pass these through from simulation. or level data
+        float levelWidth = levelSize.x;
         float levelHeight = levelSize.y;
 
         // Defining the camera bounds
@@ -168,8 +173,10 @@ void Graphics::render()
     for (const auto& entity : m_simulation.getEntities())
         m_window.draw(*entity);
 
+    // Loops through the bullets and draws them
     for (const auto& bullet : m_simulation.getBullets())
     {
+		// Only draws the bullet if its active
         if (bullet->isActive())
         {
             m_window.draw(*bullet);

@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 
+// Entity that is affected by physics, gravity and/or velocity
 class DynamicEntity : public Entity
 {
 public:
@@ -16,8 +17,8 @@ public:
 	void setVelocity(sf::Vector2f velocity) { m_velocity = velocity; }
 	const sf::Vector2f& getVelocity() const { return m_velocity; }
 
-	void setIsGrounded(bool grounded) { m_grounded = grounded; }
-	bool isGrounded() const { return m_grounded; }
+	void setIsGrounded(bool grounded) { m_grounded = grounded; } // Sets the entity as "on the ground", doesn't actually move it
+	bool isGrounded() const { return m_grounded; } // Check for whether the entity is on the ground
 protected:
 	sf::Vector2f m_velocity{ 0.f, 0.f };
 	float m_gravity{ 980.f }; // Gravity affecting the entity
