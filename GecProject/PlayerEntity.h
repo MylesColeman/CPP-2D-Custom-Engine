@@ -28,5 +28,4 @@ private:
 	bool m_wantsToShoot{ false };
 	float m_shootCooldownTimer{ 0.f };
 	float m_shootCooldown{ 0.5f }; // Time between being able to shoot again
-	bool m_shootKeyHeld{ false }; // Check so the shoot key has to be released before shooting again
 };

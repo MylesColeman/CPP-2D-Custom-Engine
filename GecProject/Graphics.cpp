@@ -168,6 +168,14 @@ void Graphics::render()
     for (const auto& entity : m_simulation.getEntities())
         m_window.draw(*entity);
 
+    for (const auto& bullet : m_simulation.getBullets())
+    {
+        if (bullet->isActive())
+        {
+            m_window.draw(*bullet);
+        }
+    }
+
 	// Debugging hitbox visualisers
     for (auto& pair : m_simulation.m_triggerColliders)
         m_window.draw(m_simulation.m_triggerHitboxVisualiser);

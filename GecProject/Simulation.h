@@ -1,7 +1,9 @@
 #pragma once
 #include "Entity.h"
+#include "DynamicEntity.h"
 #include "PlayerEntity.h"
 #include "Collectable.h"
+#include "Bullet.h"
 #include "InputManager.h"
 #include "CollisionRectangle.h"
 #include <vector>
@@ -35,10 +37,14 @@ public:
     std::vector<CollisionRectangle> m_solidColliders;
     std::unordered_map<std::string, CollisionRectangle> m_triggerColliders;
 
+	// A getter function for the bullets for use in the graphics (for rendering)
+    const std::vector<std::unique_ptr<Bullet>>& getBullets() const
+    {
+        return m_bulletPool;
+    }
+
     // Debugging hitbox visualisers
     sf::RectangleShape m_triggerHitboxVisualiser;
-
-
 private:
     AnimationManager m_animationManager;
     InputManager m_inputManager;
@@ -49,6 +55,8 @@ private:
     PlayerEntity* m_player{ nullptr };
 
     sf::Vector2f m_levelSize{ 500.f, 500.f };
+
+    std::vector<std::unique_ptr<Bullet>> m_bulletPool;
 
     std::vector<std::unique_ptr<Entity>> m_newEntities;
 

@@ -1,6 +1,4 @@
 #include "Simulation.h"
-#include "DynamicEntity.h"
-#include "Bullet.h"
 
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
@@ -14,6 +12,13 @@ Simulation::Simulation(TextureManager& textureManager) :
     m_entities.push_back(std::move(player));
     m_player->setPosition({ 25.f, 50.f });
     m_inputManager.addListener(m_player);
+
+    // Bullet Pool
+    const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
+    for (int i = 0; i < 15; ++i)
+    {
+        m_bulletPool.push_back(std::make_unique<Bullet>(bulletSprite));
+    }
 
     auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
     collectable->setPosition({ 0.f, 90.f });
@@ -45,16 +50,18 @@ void Simulation::update(float deltaTime)
 
     if (m_player->tryShoot(shootDir, facingRight))
     {
-        // Create Bullet
-        const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
-
-        auto bullet = std::make_unique<Bullet>(bulletSprite, shootDir * 250.f);
-
         sf::Vector2f spawnPos = m_player->getPosition();
-        spawnPos.y -= 5.f;
-        bullet->setPosition(spawnPos);
+        spawnPos.y -= 5.f; // Adjust to gun height
 
-        m_newEntities.push_back(std::move(bullet));
+        // Find the first sleeping bullet and fire it
+        for (auto& bullet : m_bulletPool)
+        {
+            if (!bullet->isActive())
+            {
+                bullet->fire(spawnPos, shootDir * 250.f);
+                break; // We fired one, stop looking
+            }
+        }
     }
 
     // Loops through all entities and updates them
@@ -168,6 +175,31 @@ void Simulation::update(float deltaTime)
 
                 dynamicEntity->setPosition(pos);
                 dynamicEntity->syncHitbox();
+            }
+        }
+    }
+
+    for (auto& bullet : m_bulletPool)
+    {
+        if (!bullet->isActive()) continue;
+
+		bullet->update(deltaTime); // Ensures the bullet is deactivated after its lifetime
+
+        bullet->move(bullet->getVelocity() * deltaTime);
+        bullet->syncHitbox();
+
+        // Check Collision with World (Walls/Floors)
+        for (const auto& obstacle : m_entities)
+        {
+            // Ignore self types and collectables
+            if (obstacle->getType() == EntityType::Player ||
+                obstacle->getType() == EntityType::Collectable ||
+                obstacle->getType() == EntityType::Bullet) continue;
+
+            if (bullet->getHitbox().intersection(obstacle->getHitbox()))
+            {
+				bullet->deactivate(); // Collision detected, deactivate bullet
+                break;
             }
         }
     }
