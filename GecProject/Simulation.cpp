@@ -3,7 +3,7 @@
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
 {
-	m_levelSize = { 500.f, 500.f }; // Defines the size of the level. Temporary solution
+	m_levelSize = { 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
 
     // Adding entities to the entity vector, and setting up the animations for them
 	// Player
@@ -53,8 +53,11 @@ void Simulation::update(float deltaTime)
 	// Handle shooting
     if (m_player->tryShoot(shootDir, facingRight))
     {
+        // Adjust to gun height to better match player sprite (the gun)
+		// NEEDS FIXING LATER WITH PROPER GUN POSITIONING ONCE ASSETS ARE FINALISED
         sf::Vector2f spawnPos = m_player->getPosition();
-        spawnPos.y -= 10.f; // Adjust to gun height to better match player sprite (the gun)
+		spawnPos.x += 6.5f; // Goes off of the player's spine
+        spawnPos.y -= 10.f; 
 
         // Find the first sleeping bullet and fire it
         for (auto& bullet : m_bulletPool)

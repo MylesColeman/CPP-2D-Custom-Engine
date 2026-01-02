@@ -43,7 +43,7 @@ private:
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
 
-    sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level. Temporary solution
+	sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
 
 	std::vector<std::unique_ptr<Bullet>> m_bulletPool; // Defines all bullets in the simulation
 
