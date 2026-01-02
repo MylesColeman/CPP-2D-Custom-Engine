@@ -18,6 +18,13 @@ void InputManager::update()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
 		actions.push_back(Actions::eJump);
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
+		actions.push_back(Actions::eShoot);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+		actions.push_back(Actions::eLookUp);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+		actions.push_back(Actions::eLookDown);
+
 	// Loops through all listeners and handles the input - if there are any
 	for (IReceivesInput* listeners : m_listeners)
 	{

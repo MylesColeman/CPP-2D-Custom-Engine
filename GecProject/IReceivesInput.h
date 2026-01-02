@@ -7,7 +7,10 @@ enum class Actions
 	eNone,
 	eMoveRight,
 	eMoveLeft,
-	eJump
+	eJump,
+	eShoot,
+	eLookUp,
+	eLookDown
 };
 
 class IReceivesInput

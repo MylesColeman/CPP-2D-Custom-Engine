@@ -51,7 +51,17 @@ public:
 
         // Calculates and sets the intRect for the first frame. Otherwise the entire spritesheet would be shown till it was set in update
         int intRectsYPos = m_currentFrame * m_animation->spriteHeight;
-        this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
+        if (!m_flipped)
+        {
+            // Face Right (Normal)
+            this->setTextureRect(sf::IntRect({ 0, intRectsYPos }, { m_animation->spriteWidth, m_animation->spriteHeight }));
+        }
+        else
+        {
+            // Face Left (Flipped)
+            // Start X at width, and use negative width to flip
+            this->setTextureRect(sf::IntRect({ m_animation->spriteWidth, intRectsYPos }, { -m_animation->spriteWidth, m_animation->spriteHeight }));
+        }
     }
 
 	// Handles the updating of the entity, it is virtual so derived classes can extend it. But it handles animation by default

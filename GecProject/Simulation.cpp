@@ -20,53 +20,18 @@ Simulation::Simulation(TextureManager& textureManager) :
 
     // Static Sprite
     // Floor
-    auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 0.f, 108.f });
-    m_entities.push_back(std::move(floor));
+    float groundLevel = 126.f;
+    float tileWidth = 18.f;
 
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 0.f, 126.f });
-    m_entities.push_back(std::move(floor));
+    // Generate a long floor (55 tiles * 18 width = ~1000 pixels)
+    for (int i = 0; i < 55; ++i)
+    {
+        auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
 
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 18.f, 126.f });
-    m_entities.push_back(std::move(floor));
+        floor->setPosition({ i * tileWidth, groundLevel });
 
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 36.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 54.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 54.f, 144.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 90.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 108.f, 72.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 108.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 126.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 144.f, 126.f });
-    m_entities.push_back(std::move(floor));
-
-    floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-    floor->setPosition({ 162.f, 126.f });
-    m_entities.push_back(std::move(floor));
+        m_entities.push_back(std::move(floor));
+    }
 }
 
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions

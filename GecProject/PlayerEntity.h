@@ -8,6 +8,8 @@ public:
 
 	void update(float deltaTime) override;
 	void handleInput(const std::vector<Actions>& actions);
+
+	bool isFacingRight() const { return !m_flipped; }
 private:
 	float m_speed{ 75.f }; // Defines the speed of the player
 	float m_jumpHeight{ -350.f }; // Defines the jump height of the player
@@ -19,4 +21,10 @@ private:
 	const Animation* m_playerStandingShot{ nullptr };
 	const Animation* m_playerWalk{ nullptr };
 	const Animation* m_playerWalkShot{ nullptr };
+
+	bool m_isLookingUp{ false };
+	bool m_isLookingDown{ false };
+	bool m_wantsToShoot{ false };
+	float m_shootCooldownTimer{ 0.f };
+	float m_shootCooldown{ 0.5f }; // Time between being able to shoot again
 };
