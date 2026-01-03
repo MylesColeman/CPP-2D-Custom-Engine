@@ -8,55 +8,17 @@ Simulation::Simulation(TextureManager& textureManager) :
 
 void Simulation::reset()
 {
-	// Clears existing entities and bullets
     m_entities.clear();
     m_bulletPool.clear();
+    m_player = nullptr;
+    m_inputManager.clearListeners();
     m_score = 0;
-	m_player = nullptr; // Resets player pointer
 
-    m_levelSize = { 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
+    loadLevel("Data/Levels/Level1.txt");
 
-    // Adding entities to the entity vector, and setting up the animations for them
-    // Player
-    auto player = std::make_unique<PlayerEntity>(m_animationManager);
-    m_player = player.get();
-    m_entities.push_back(std::move(player));
-    m_player->setPosition({ 25.f, 50.f });
-    m_inputManager = InputManager();
-    m_inputManager.addListener(m_player); // Adds the player as an input listener
-
-    // Bullet Pool
-    const StaticSprite& bullet = m_animationManager.getStaticSprite("bullet");
-    // Pre-create a pool of bullets
-    for (int i = 0; i < 20; ++i)
+    if (!m_player)
     {
-        m_bulletPool.push_back(std::make_unique<Bullet>(bullet));
-    }
-
-    // Enemy
-    auto enemy = std::make_unique<Enemy>(m_animationManager, 200.f);
-    enemy->setPosition({ 300.f, 50.f });
-    enemy->setTarget(m_player); // Sets the player as the enemy's target
-    m_entities.push_back(std::move(enemy));
-
-    // Collectable
-    auto collectable = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // ADD COIN SPRITE
-    collectable->setPosition({ 0.f, 90.f });
-    m_entities.push_back(std::move(collectable));
-
-    // Static Sprite
-    // Floor
-    float groundLevel = 126.f;
-    float tileWidth = 18.f;
-
-    // Generate a long floor (55 tiles * 18 width = ~1000 pixels)
-    for (int i = 0; i < 55; ++i)
-    {
-        auto floor = std::make_unique<Entity>(m_animationManager.getStaticSprite("TopEdgelessFloor"));
-
-        floor->setPosition({ i * tileWidth, groundLevel });
-
-        m_entities.push_back(std::move(floor));
+        std::cout << "CRITICAL ERROR: Player not spawned!" << std::endl;
     }
 }
 
@@ -325,4 +287,120 @@ void Simulation::update(float deltaTime)
 
     // Deleting marked entities
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](const std::unique_ptr<Entity>& entity) { return entity->getDestroy(); }), m_entities.end());
+}
+
+void Simulation::loadLevel(const std::string& filename)
+{
+	// Loads level from a text file
+    std::ifstream file(filename);
+    if (!file.is_open())
+    {
+        std::cout << "Failed to load level: " << filename << std::endl;
+        return;
+    }
+
+	// Clears existing entities and bullets
+    m_entities.clear();
+    m_bulletPool.clear();
+
+    // Bullet setup
+    const StaticSprite& bullet = m_animationManager.getStaticSprite("bullet");
+    // Pre-create a pool of bullets
+    for (int i = 0; i < 20; ++i)
+    {
+        m_bulletPool.push_back(std::make_unique<Bullet>(bullet));
+    }
+
+    std::string line;
+    int y = 0;
+    int maxX = 0;
+    float tileSize = 18.f; // How large a single floor tile is
+
+	// Reads each line from the file
+    while (std::getline(file, line))
+    {
+		std::stringstream ss(line); // String stream for parsing
+		std::string cell;
+        int x = 0;
+
+		// Separates each cell by commas
+        while (std::getline(ss, cell, ','))
+        {
+			int tileId = std::stoi(cell); // Converts string to integer
+			if (tileId != 0) // 0 represents empty space
+            {
+                createEntityFromId(tileId, x * tileSize, y * tileSize);
+            }
+			x++;
+        }
+        y++;
+    }
+
+	// Ensures all enemies have reference to the player
+    if (m_player)
+    {
+        for (auto& entity : m_entities)
+        {
+            // Check if it's an enemy
+            if (entity->getType() == EntityType::Enemy)
+            {
+                // Dynamic cast to safely access Enemy-specific functions
+                if (auto* enemy = dynamic_cast<Enemy*>(entity.get()))
+                {
+                    enemy->setTarget(m_player);
+                }
+            }
+        }
+    }
+}
+
+void Simulation::createEntityFromId(int id, float x, float y)
+{
+	// Offset to centre the entity in the tile
+    float offset = 9.f;
+    sf::Vector2f pos = { x + offset, y + offset };
+
+	// Special Entities - Not tiles
+	if (id >= 200) // 200 is an arbitrary cutoff for special entities
+    {
+		// Looks at the ID to determine which special entity to create
+        switch (id)
+        {
+        case 999: // Player
+        {
+			// Only creates the player if it doesn't already exist
+            if (!m_player)
+            {
+                auto player = std::make_unique<PlayerEntity>(m_animationManager);
+                m_player = player.get();
+                m_entities.push_back(std::move(player));
+                m_inputManager.addListener(m_player);
+            }
+            m_player->setPosition(pos);
+        }
+        break;
+        case 998: // Enemy
+        {
+			auto enemy = std::make_unique<Enemy>(m_animationManager, 150.f); // 150.f patrol range
+            enemy->setPosition(pos);
+            m_entities.push_back(std::move(enemy));
+        }
+        break;
+        case 997: // Coin
+        {
+            auto coin = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // NEED TO FIND COIN SPRITE
+            coin->setPosition(pos);
+            m_entities.push_back(std::move(coin));
+        }
+        break;
+        }
+		return; // Entity created, exit function
+    }
+
+	// Tile Entities
+	std::string tileName = "tile_" + std::to_string(id - 1); // Generates the tile name based on the ID
+
+    auto tile = std::make_unique<Entity>(m_animationManager.getStaticSprite(tileName));
+    tile->setPosition(pos);
+    m_entities.push_back(std::move(tile));
 }

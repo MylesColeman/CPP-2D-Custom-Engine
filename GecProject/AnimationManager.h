@@ -59,7 +59,24 @@ public:
 		configureStaticSprite("bullet", "Data/Textures/bullet.png", sf::IntRect({ 0, 0 }, { 5, 5 }));
 
 		// World
-		configureStaticSprite("TopEdgelessFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 36, 18 }, { 18, 18 }));
+		int columns = 16;
+		int rows = 7;
+		int tileWidth = 18;
+		int tileHeight = 18;
+
+		// Loop from 0 to 111 (112 tile)
+		for (int i = 0; i < (columns * rows); ++i)
+		{
+			// Calculate X and Y coordinates in the texture
+			int x = (i % columns) * tileWidth; // Modulus for column position
+			int y = (i / columns) * tileHeight; // Division for row position
+
+			// Generate a unique name
+			std::string tileName = "tile_" + std::to_string(i);
+
+			// Create the sprite configuration automatically
+			configureStaticSprite(tileName, "Data/Textures/World/tilemap_packed.png", sf::IntRect({ x, y }, { tileWidth, tileHeight }));
+		}
 	}
 
 	// Assigns variables to the structure, so the animation can be used

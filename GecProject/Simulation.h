@@ -12,6 +12,8 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 class Simulation
 {
@@ -23,6 +25,7 @@ public:
 
     void update(float deltaTime); // Updates the input manager with new inputs, loops through all entities and updates them and, handles the hitboxes and collisions
 
+    void loadLevel(const std::string& filename);
     sf::Vector2f getLevelSize() const { return m_levelSize; }
 
     // A getter function for the entities for use in the graphics (for rendering)
@@ -50,6 +53,7 @@ private:
     // For quicker access than looping through the vector
     PlayerEntity* m_player{ nullptr };
 
+	void createEntityFromId(int id, float x, float y); // Creates an entity based on the ID from the level file
 	sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
 
 	std::vector<std::unique_ptr<Bullet>> m_bulletPool; // Defines all bullets in the simulation

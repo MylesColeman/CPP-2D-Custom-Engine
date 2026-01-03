@@ -16,6 +16,12 @@ public:
 		return manager;
 	}
 
+	// For simulation resest
+	void clearListeners()
+	{
+		m_listeners.clear();
+	}
+
 	void addListener(IReceivesInput* listener);
 	void update();
 };
