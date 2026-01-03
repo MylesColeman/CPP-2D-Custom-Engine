@@ -39,6 +39,23 @@ Graphics::Graphics() :
         std::cout << "ImGUI could not be loaded!" << std::endl;
 
     initUI();
+    initBg();
+}
+
+void Graphics::initBg()
+{
+	// Sets up the background sprite - done here as it only needs to be done once and doesn't interact with the simulation
+    sf::Texture* bgTexture = m_textureManager.getTexture("Data/Textures/World/brickWall_scrollingBg.png");
+    
+    if (bgTexture)
+    {
+		bgTexture->setRepeated(true); // Enables texture repeating for scrolling effect
+
+        m_backgroundSprite.emplace(*bgTexture);
+
+
+        m_backgroundSprite->setTextureRect({ { 0, 0 }, {320, 180} });
+    }
 }
 
 void Graphics::initUI()
@@ -259,6 +276,22 @@ void Graphics::render()
 	// Only renders if in the ingame state or the Endgame state
     if (m_state == GameState::Ingame || m_state == GameState::Endgame)
     {
+        sf::Vector2f camPos = m_gameView.getCenter();
+
+		// Background Scrolling Logic - 0.5 speed
+        int xOffset = static_cast<int>(camPos.x * 0.5f);
+        int yOffset = static_cast<int>(camPos.y * 0.5f);
+
+        if (m_backgroundSprite.has_value())
+        {
+            m_backgroundSprite->setTextureRect({ {xOffset, yOffset}, {320, 180} }); // Updates the texture rect for scrolling effect
+            m_backgroundSprite->setPosition({ camPos.x - 160, camPos.y - 90 }); // Centres the background on the camera
+
+            // Sets the view to the game view for rendering the game world
+            m_window.setView(m_gameView);
+            m_window.draw(*m_backgroundSprite);
+        }
+        
         // Logic behind camera movement which follows the player
         if (m_simulation.getPlayer())
         {
@@ -296,7 +329,7 @@ void Graphics::render()
         m_window.setView(m_gameView); // Updates the view
 
 		// Lambda function to draw entities with interpolation
-        auto drawInterpolated = [&](Entity* entity)
+        auto drawInterpolated = [&](Entity* entity, sf::BlendMode blendMode = sf::BlendAlpha)
             { 
 				// Gets actual and previous positions
                 sf::Vector2f actualPos = entity->getPosition();
@@ -305,7 +338,7 @@ void Graphics::render()
 				sf::Vector2f visualPos = oldPos + (actualPos - oldPos) * alpha; // Interpolated position
 
 				entity->setPosition(visualPos); // Move to visual spot for drawing
-				m_window.draw(*entity); // Draws the entity at the interpolated position
+				m_window.draw(*entity, blendMode); // Draws the entity at the interpolated position
 				entity->setPosition(actualPos); // Returns the entity to its actual position for physics calculations (not visual)
             };
 
@@ -318,7 +351,7 @@ void Graphics::render()
         {
             // Only draws the bullet if its active
             if (bullet->isActive())
-                drawInterpolated(bullet.get());
+                drawInterpolated(bullet.get(), sf::BlendAdd);
         }
 
         // Debugging hitbox visualisers

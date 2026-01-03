@@ -2,6 +2,7 @@
 #include "Simulation.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <optional>
 
 // Enum to track the current game state
 enum class GameState
@@ -21,6 +22,8 @@ private:
 	void resizeView(const sf::Window& window, sf::View& view); // Resizes the view when the window is resized
 	void update(float deltaTime); // Handles the updating of the simulation, which in turn handles the updating of entities (e.g. animations & movement). Also updates the ImGui and the FPS counter
 	void render(); // The actual logic behind displaying the sprite to the window
+
+	void initBg(); // Helper function to initialise the background elements
 
 	void initUI(); // Helper function to initialise UI (fonts, styles, etc.)
 	void drawHUD(); // Draws the HUD elements (Health, score, etc)
@@ -44,6 +47,8 @@ private:
 	float m_fps{ 0.0f };
 
 	GameState m_state{ GameState::Frontend }; // Tracks the current game state
+
+	std::optional<sf::Sprite> m_backgroundSprite;
 
 	// Menu Text
 	sf::Font m_font;

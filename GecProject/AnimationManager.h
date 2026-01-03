@@ -56,7 +56,7 @@ public:
 
 		// Statics
 		// Bullet
-		configureStaticSprite("bulletSprite", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 198, 126 }, { 10, 10 }));
+		configureStaticSprite("bullet", "Data/Textures/bullet.png", sf::IntRect({ 0, 0 }, { 5, 5 }));
 
 		// World
 		configureStaticSprite("TopEdgelessFloor", "Data/Textures/World/tilemap_packed.png", sf::IntRect({ 36, 18 }, { 18, 18 }));

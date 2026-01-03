@@ -26,11 +26,11 @@ void Simulation::reset()
     m_inputManager.addListener(m_player); // Adds the player as an input listener
 
     // Bullet Pool
-    const StaticSprite& bulletSprite = m_animationManager.getStaticSprite("bulletSprite");
+    const StaticSprite& bullet = m_animationManager.getStaticSprite("bullet");
     // Pre-create a pool of bullets
     for (int i = 0; i < 20; ++i)
     {
-        m_bulletPool.push_back(std::make_unique<Bullet>(bulletSprite));
+        m_bulletPool.push_back(std::make_unique<Bullet>(bullet));
     }
 
     // Enemy
