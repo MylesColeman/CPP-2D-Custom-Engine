@@ -130,6 +130,9 @@ public:
     EntityType getType() const { return m_type; } 
 	const CollisionRectangle& getHitbox() const { return m_hitbox; } // Returns the hitbox of the entity for collision detection
 
+	// For interpolation - to help with smooth movement
+    void setPreviousPosition(sf::Vector2f pos) { m_previousPosition = pos; }
+    sf::Vector2f getPreviousPosition() const { return m_previousPosition; }
 protected:
     const Animation* m_animation{ nullptr };
     EntityType m_type;
@@ -140,6 +143,8 @@ protected:
     bool m_flipped{ false };
     void flipSprite(bool flipped) { m_flipped = flipped; }
 private:
+	sf::Vector2f m_previousPosition; // For interpolation - to help with smooth movement
+
     sf::Clock m_animClock;
     int m_currentFrame{ 0 };
     bool m_isAnimated{ false };

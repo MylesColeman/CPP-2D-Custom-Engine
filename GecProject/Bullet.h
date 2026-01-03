@@ -15,6 +15,7 @@ public:
     {
         m_active = true;
         this->setPosition(position);
+		this->setPreviousPosition(position); // For interpolation - fixes the bullet appearing to jump on respawn
         m_velocity = velocity;
         m_lifetime = 3.f;    // Reset the timer
         this->syncHitbox();  // Ensure hitbox is at the new position immediately

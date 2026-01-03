@@ -207,13 +207,18 @@ void Graphics::render()
     // The UI gets defined each time
     DefineGUI(m_fps);
 
+	float alpha = m_accumulator / m_fixedTimestep; // Calculates the alpha for interpolation
+
 	// Only renders if in the ingame state or the Endgame state
     if (m_state == GameState::Ingame || m_state == GameState::Endgame)
     {
         // Logic behind camera movement which follows the player
         if (m_simulation.getPlayer())
         {
-            sf::Vector2f playerPos = m_simulation.getPlayer()->getPosition();
+			// Interpolating the player's position for smooth camera movement
+            sf::Vector2f currentPos = m_simulation.getPlayer()->getPosition();
+            sf::Vector2f prevPos = m_simulation.getPlayer()->getPreviousPosition();
+            sf::Vector2f lerpPos = prevPos + (currentPos - prevPos) * alpha;
 
             sf::Vector2f levelSize = m_simulation.getLevelSize();
             float levelWidth = levelSize.x;
@@ -230,29 +235,43 @@ void Graphics::render()
 
             // Clamping the camera to the level bounds
             // X
-            if (playerPos.x < minX) playerPos.x = minX;
-            else if (playerPos.x > maxX) playerPos.x = maxX;
+            if (lerpPos.x < minX) lerpPos.x = minX;
+            else if (lerpPos.x > maxX) lerpPos.x = maxX;
 
             // Y
-            if (playerPos.y < minY) playerPos.y = minY;
-            else if (playerPos.y > maxY) playerPos.y = maxY;
+            if (lerpPos.y < minY) lerpPos.y = minY;
+            else if (lerpPos.y > maxY) lerpPos.y = maxY;
 
             // Applying the new clamped camera position
-            m_gameView.setCenter(playerPos);
+            m_gameView.setCenter(lerpPos);
         }
 
         m_window.setView(m_gameView); // Updates the view
 
+		// Lambda function to draw entities with interpolation
+        auto drawInterpolated = [&](Entity* entity)
+            { 
+				// Gets actual and previous positions
+                sf::Vector2f actualPos = entity->getPosition();
+                sf::Vector2f oldPos = entity->getPreviousPosition();
+
+				sf::Vector2f visualPos = oldPos + (actualPos - oldPos) * alpha; // Interpolated position
+
+				entity->setPosition(visualPos); // Move to visual spot for drawing
+				m_window.draw(*entity); // Draws the entity at the interpolated position
+				entity->setPosition(actualPos); // Returns the entity to its actual position for physics calculations (not visual)
+            };
+
         // Loops through the vector of entities created in the simulation, and draws them
         for (const auto& entity : m_simulation.getEntities())
-            m_window.draw(*entity);
+			drawInterpolated(entity.get());
 
         // Loops through the bullets and draws them
         for (const auto& bullet : m_simulation.getBullets())
         {
             // Only draws the bullet if its active
             if (bullet->isActive())
-                m_window.draw(*bullet);
+                drawInterpolated(bullet.get());
         }
 
         // Debugging hitbox visualisers

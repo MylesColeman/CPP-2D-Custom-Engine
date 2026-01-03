@@ -69,6 +69,23 @@ bool Simulation::isGameOver() const
 // Updates the input manager with new inputs, loops through all entities and updates them, and handles the hitboxes and collisions
 void Simulation::update(float deltaTime)
 {
+	// Store previous positions for interpolation - doneso before updating positions
+    if (m_player)
+        m_player->setPreviousPosition(m_player->getPosition());
+
+    for (auto& entity : m_entities)
+    {
+        entity->setPreviousPosition(entity->getPosition());
+    }
+
+    for (auto& bullet : m_bulletPool)
+    {
+        if (bullet->isActive())
+            bullet->setPreviousPosition(bullet->getPosition());
+    }
+
+	if (!m_player) return; // Safety check - incase player is null
+
     m_inputManager.update();
 
     sf::Vector2f shootDir;
