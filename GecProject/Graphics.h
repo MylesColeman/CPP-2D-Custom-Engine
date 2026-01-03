@@ -23,6 +23,7 @@ private:
 	void render(); // The actual logic behind displaying the sprite to the window
 
 	void initUI(); // Helper function to initialise UI (fonts, styles, etc.)
+	void drawHUD(); // Draws the HUD elements (Health, score, etc)
 
 	sf::RenderWindow m_window;
 	sf::View m_gameView;
@@ -44,8 +45,15 @@ private:
 
 	GameState m_state{ GameState::Frontend }; // Tracks the current game state
 
+	// Menu Text
 	sf::Font m_font;
 	sf::Text m_titleText;
 	sf::Text m_instructionText; // Press Space to Start
 	sf::Text m_scoreText;
+
+	// HUD Elements
+	sf::Text m_hudScoreText;
+	// Health Bar
+	sf::RectangleShape m_healthBarBg; // Health bar background
+	sf::RectangleShape m_healthBarFg; // Health bar foreground (what depletes)
 };

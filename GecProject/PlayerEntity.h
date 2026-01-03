@@ -15,7 +15,9 @@ public:
 	// Health management
 	void takeDamage(int amount);
 	int getHealth() const { return m_health; }
+	int getMaxHealth() const { return m_maxHealth; }
 private:
+	const int m_maxHealth{ 5 }; // Maximum player health
 	int m_health{ 5 }; // Player health
 
 	float m_speed{ 75.f }; // Defines the speed of the player

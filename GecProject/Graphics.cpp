@@ -24,7 +24,8 @@ Graphics::Graphics() :
     m_simulation(m_textureManager),
     m_titleText(m_font),
     m_instructionText(m_font),
-    m_scoreText(m_font)
+    m_scoreText(m_font),
+    m_hudScoreText(m_font)
 {
 	m_window.setPosition({ 0, 0 }); // Sets the window position to the top-left of the screen
 
@@ -70,6 +71,52 @@ void Graphics::initUI()
     m_scoreText.setFont(m_font);
     m_scoreText.setCharacterSize(12);
     m_scoreText.setFillColor(sf::Color::Green);
+
+    // In-Game HUD
+    // Score Text
+	m_hudScoreText.setFont(m_font);
+    m_hudScoreText.setCharacterSize(10);
+    m_hudScoreText.setFillColor(sf::Color::White);
+    m_hudScoreText.setPosition({ 10.f, 30.f });
+
+    // Health Bar Background
+    m_healthBarBg.setSize({ 100.f, 15.f });
+	m_healthBarBg.setFillColor(sf::Color(50, 50, 50)); // Dark grey background
+    m_healthBarBg.setPosition({ 10.f, 10.f });
+
+    // Health Bar Foreground
+    m_healthBarFg.setSize({ 100.f, 15.f });
+	m_healthBarFg.setFillColor(sf::Color::Green); // Green foreground
+    m_healthBarFg.setPosition({ 10.f, 10.f });
+}
+
+// Draws the HUD elements (Health, score, etc)
+void Graphics::drawHUD()
+{
+    // Safety Check: If player is dead or level not loaded, don't draw HUD
+    if (!m_simulation.getPlayer()) return;
+
+	const float maxHealth = static_cast<float>(m_simulation.getPlayer()->getMaxHealth());
+    float currentHealth = static_cast<float>(m_simulation.getPlayer()->getHealth());
+
+	// Clamp health to 0 so bar doesn't flip if negative (shouldn't happen normally)
+    if (currentHealth < 0.f) currentHealth = 0.f;
+
+	// Calculate width ratio (0.0 to 1.0) how much of the health bar to fill
+    float widthRatio = currentHealth / maxHealth;
+
+	// Used to scale the health bar
+    float maxWidth = m_healthBarBg.getSize().x;
+
+    // Resize the foreground (Green) bar (the actual health)
+    m_healthBarFg.setSize({ maxWidth * widthRatio, m_healthBarBg.getSize().y });
+
+	m_hudScoreText.setString("Score: " + std::to_string(m_simulation.getScore())); // Updates the score text
+
+    // Draws the HUD
+    m_window.draw(m_healthBarBg);
+    m_window.draw(m_healthBarFg);
+    m_window.draw(m_hudScoreText);
 }
 
 // Will be called in main, running all the graphics/display logic
@@ -293,6 +340,8 @@ void Graphics::render()
         m_window.draw(m_titleText);
         m_window.draw(m_instructionText);
     }
+    else if (m_state == GameState::Ingame)
+        drawHUD();
 	else if (m_state == GameState::Endgame) // Endgame State
     {
         m_titleText.setString("GAME OVER");
