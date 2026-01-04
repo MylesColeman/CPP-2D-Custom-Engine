@@ -172,10 +172,6 @@ bool Enemy::canSeePlayer() const
 	sf::Vector2f myPos = getPosition(); // Enemy position used for comparison
 	sf::Vector2f targetPos = m_target->getPosition(); // Player position used for comparison
 
-    std::cout << "targetpos:" << targetPos.x << std::endl;
-	std::cout << "mypos:" << myPos.x << std::endl;
-	std::cout << "calcpos:" << std::abs(targetPos.x - myPos.x) << std::endl;
-
     // Check Horizontal Distance
     if (std::abs(targetPos.x - myPos.x) > m_visionRangeX) return false; // Too far away
 
