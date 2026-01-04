@@ -158,9 +158,4 @@ bool PlayerEntity::tryShoot(sf::Vector2f& direction, bool& facingRight)
 void PlayerEntity::takeDamage(int amount)
 {
 	m_health -= amount;
-
-	if (m_health <= 0)
-	{
-		// IMPLEMENT LEVEL RESTART LOGIC OR GAME OVER HERE
-	}
 }
