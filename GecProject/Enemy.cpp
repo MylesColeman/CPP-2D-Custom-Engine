@@ -4,6 +4,7 @@
 Enemy::Enemy(const AnimationManager& animManager, float patrolRange)
     : DynamicEntity(animManager.getAnimation("playerWalk"), EntityType::Enemy), m_patrolRange(patrolRange)
 {
+	m_playerIdle = &animManager.getAnimation("playerIdle");
     m_playerWalk = &animManager.getAnimation("playerWalk");
     m_playerStandingShot = &animManager.getAnimation("playerStandingShot");
 
@@ -12,37 +13,59 @@ Enemy::Enemy(const AnimationManager& animManager, float patrolRange)
 
 void Enemy::update(float deltaTime)
 {
+    if (!m_hasSetStartPos)
     {
-        if (!m_hasSetStartPos)
-        {
-            m_startX = getPosition().x;
-            m_hasSetStartPos = true;
-        }
+        m_startX = getPosition().x;
+        m_hasSetStartPos = true;
+    }
 
-        // Shoot Cooldown Timer
-        if (m_shootTimer > 0.f)
-            m_shootTimer -= deltaTime;
+    // Shoot Cooldown Timer
+    if (m_shootTimer > 0.f)
+        m_shootTimer -= deltaTime;
 
-        // State Management
-        if (canSeePlayer()) // If player is visible, attack
-        {
-            m_state = State::Attacking;
-        }
-        else // Otherwise patrol
-        {
-            m_state = State::Patrolling;
-        }
+    // State Management
+    if (canSeePlayer()) // If player is visible, attack
+    {
+        m_state = State::Attacking;
+    }
+    else // Otherwise patrol
+    {
+        m_state = State::Patrolling;
+    }
 
-		// State Behaviors
-		if (m_state == State::Attacking) // Attack Behavior
-        {
-            m_velocity.x = 0.f; // Stops the enemy from moving, whilst attacking
+    // State Behaviors
+    if (m_state == State::Attacking) // Attack Behavior
+    {
+        m_velocity.x = 0.f; // Stops the enemy from moving, whilst attacking
 
-            // Change Animation to Shooting
-            if (m_animation != m_playerStandingShot)
-                setAnimation(*m_playerStandingShot);
+        // Change Animation to Shooting
+        if (m_animation != m_playerStandingShot)
+            setAnimation(*m_playerStandingShot);
+    }
+    else // Patrol Behavior
+    {
+        if (m_patrolRange == 0.f)
+        {
+            if (m_animation != m_playerIdle)
+                setAnimation(*m_playerIdle);
+
+            m_velocity.x = 0.f; // Force stop
+
+            // Checks which way to face based on player position
+            if (m_target)
+            {
+                float diffX = m_target->getPosition().x - getPosition().x; // Difference in X positions
+
+                // Check if player is within vision range
+                if (std::abs(diffX) < m_visionRangeX)
+                {
+                    // Turn to face the player
+                    if (diffX < 0) flipSprite(true);
+                    else flipSprite(false);
+                }
+            }
         }
-		else // Patrol Behavior
+        else
         {
             // Change Animationto Walking
             if (m_animation != m_playerWalk)
@@ -77,29 +100,44 @@ void Enemy::update(float deltaTime)
             else if (m_velocity.x > 0)
                 this->flipSprite(false);
         }
-
-        // Turn Red to distinguish from Player!
-        this->setColor(sf::Color::Red);
-
-        // Call parent update to handle animation ticks
-        DynamicEntity::update(deltaTime);
     }
+
+    // Turn Red to distinguish from Player!
+    this->setColor(sf::Color::Red);
+
+    // Call parent update to handle animation ticks
+    DynamicEntity::update(deltaTime);
+}
+
+void Enemy::turnAround()
+{
+	m_speed = -m_speed; // Reverse direction
+	m_velocity.x = -m_velocity.x; // Apply new velocity
+
+	// Sprite Flipper
+    if (m_velocity.x < 0) this->flipSprite(true);
+    else this->flipSprite(false);
 }
 
 // Attempts to shoot a projectile, returns true if successful
 bool Enemy::tryShoot(sf::Vector2f& direction)
 {
-    // Checks whether the player wants to shoot and if the cooldown timer has elapsed
+    // Checks whether the enemy wants to shoot and if the cooldown timer has elapsed
     if (m_state == State::Attacking && m_shootTimer <= 0.f)
     {
         m_shootTimer = m_shootCooldown; // Sets a cooldown of 0.5 seconds between shots
 
         sf::Vector2f myPos = getPosition();
-        myPos.x += 6.5f; // Adjusts to shoot from the gun height
-		myPos.y -= 10.f; // Adjusts to shoot from the gun height
+
+        float xOffset = 2.5f; // Adjusts to shoot from the gun height
+        float yOffset = -0.5f; // Adjusts to shoot from the gun height
+
+        if (m_flipped) xOffset = -xOffset;
+
+        sf::Vector2f gunPos = { myPos.x + xOffset, myPos.y + yOffset };
 
 		sf::Vector2f targetPos = m_target->getPosition(); // Player position used for comparison
-		sf::Vector2f difference = targetPos - myPos; // Difference vector from enemy to player
+		sf::Vector2f difference = targetPos - gunPos; // Difference vector from gun to player
 
 		// Calculate the length of the difference vector, using square root as its more accurate for normalisation
         float length = std::sqrt(difference.x * difference.x + difference.y * difference.y); 
@@ -133,6 +171,10 @@ bool Enemy::canSeePlayer() const
 
 	sf::Vector2f myPos = getPosition(); // Enemy position used for comparison
 	sf::Vector2f targetPos = m_target->getPosition(); // Player position used for comparison
+
+    std::cout << "targetpos:" << targetPos.x << std::endl;
+	std::cout << "mypos:" << myPos.x << std::endl;
+	std::cout << "calcpos:" << std::abs(targetPos.x - myPos.x) << std::endl;
 
     // Check Horizontal Distance
     if (std::abs(targetPos.x - myPos.x) > m_visionRangeX) return false; // Too far away

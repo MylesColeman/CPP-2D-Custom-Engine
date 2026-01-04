@@ -9,9 +9,13 @@ public:
 
     void update(float deltaTime) override;
     
+	void turnAround(); // Forces the enemy to turn around when called
+
 	void setTarget(PlayerEntity* player) { m_target = player; } // Sets the player as the target for the enemy to track
 
     bool tryShoot(sf::Vector2f& direction); // Returns whether the player's attempt to shoot was successful
+
+	float getSpeed() const { return m_speed; }
 
     // Health management
     void takeDamage(int amount);
@@ -22,6 +26,7 @@ private:
     bool canSeePlayer() const;
 
     // Animations
+	const Animation* m_playerIdle{ nullptr };
     const Animation* m_playerWalk{ nullptr };
     const Animation* m_playerStandingShot{ nullptr };
 
@@ -32,7 +37,7 @@ private:
 
     // Defines the enemy's vision range for detecting the player - goes off of the viewport to ensure the enemy can always
 	// see the player when they are on screen
-    float m_visionRangeX{ 150.f };
+    float m_visionRangeX{ 200.f };
     float m_visionRangeY{ 180.f };
 
     float m_shootTimer{ 0.f };

@@ -10,10 +10,8 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <string>
-#include <fstream>
-#include <sstream>
 
 class Simulation
 {
@@ -54,7 +52,7 @@ private:
     PlayerEntity* m_player{ nullptr };
 
 	void createEntityFromId(int id, float x, float y); // Creates an entity based on the ID from the level file
-	sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level. TEMPORARY SOLUTION
+	sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level for camera bounds
 
 	std::vector<std::unique_ptr<Bullet>> m_bulletPool; // Defines all bullets in the simulation
 

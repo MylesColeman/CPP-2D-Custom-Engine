@@ -1,4 +1,6 @@
 #include "Simulation.h"
+#include <fstream>
+#include <sstream>
 
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
@@ -8,11 +10,10 @@ Simulation::Simulation(TextureManager& textureManager) :
 
 void Simulation::reset()
 {
-    m_entities.clear();
-    m_bulletPool.clear();
     m_player = nullptr;
-    m_inputManager.clearListeners();
     m_score = 0;
+
+    m_inputManager.clearListeners();
 
     loadLevel("Data/Levels/Level1.txt");
 
@@ -57,10 +58,19 @@ void Simulation::update(float deltaTime)
     if (m_player->tryShoot(shootDir, facingRight))
     {
         // Adjust to gun height to better match player sprite (the gun)
-		// NEEDS FIXING LATER WITH PROPER GUN POSITIONING ONCE ASSETS ARE FINALISED
         sf::Vector2f spawnPos = m_player->getPosition();
-		spawnPos.x += 6.5f; // Goes off of the player's spine
-        spawnPos.y -= 10.f; 
+
+		// Offset for the gun position
+        float xOffset = 2.5f;
+        float yOffset = -0.5f;
+
+		// Adjust spawn position based on facing direction
+        if (facingRight)
+            spawnPos.x += xOffset;
+        else
+            spawnPos.x -= xOffset;
+
+		spawnPos.y += yOffset; // Adjust for gun height
 
         // Find the first sleeping bullet and fire it
         for (auto& bullet : m_bulletPool)
@@ -86,8 +96,18 @@ void Simulation::update(float deltaTime)
         {
             // Determine spawn position (adjust for gun height)
             sf::Vector2f spawnPos = enemy->getPosition();
-            spawnPos.x += 6.5f;
-            spawnPos.y -= 10.f;
+            
+            // Offset for the gun position
+            float xOffset = 2.5f;
+            float yOffset = -0.5f;
+
+            // Adjust spawn position based on facing direction
+            if (facingRight)
+                spawnPos.x += xOffset;
+            else
+                spawnPos.x -= xOffset;
+
+            spawnPos.y += yOffset; // Adjust for gun height
 
             // Find a bullet to fire
             for (auto& bullet : m_bulletPool)
@@ -110,6 +130,46 @@ void Simulation::update(float deltaTime)
 		DynamicEntity* dynamicEntity = dynamic_cast<DynamicEntity*>(entity.get());
 
 		if (dynamicEntity == nullptr) continue; // Skips if not dynamic, as only dynamic entities need collision handling
+
+		// Edge Detection for Enemies
+        Enemy* enemy = dynamic_cast<Enemy*>(entity.get());
+		if (enemy && enemy->isGrounded() && std::abs(enemy->getSpeed()) > 0.1) // Only checks for enemies that are on the ground
+        {
+            sf::Vector2f velocity = enemy->getVelocity();
+            CollisionRectangle enemyBox = enemy->getHitbox();
+
+            // Create a small "sensor" box
+            CollisionRectangle edgeSensor;
+			edgeSensor.m_width = 4.f;  // Small width to ensure it only checks directly in front
+			edgeSensor.m_height = 4.f; // Small height to just check below the feet
+            edgeSensor.m_yPos = enemyBox.m_yPos + enemyBox.m_height; // Positioned at the feet
+
+            // Place sensor to the Left or Right depending on movement
+            if (velocity.x > 0) // Moving Right
+                edgeSensor.m_xPos = enemyBox.m_xPos + enemyBox.m_width;
+            else if (velocity.x < 0) // Moving Left
+                edgeSensor.m_xPos = enemyBox.m_xPos - edgeSensor.m_width;
+
+            bool groundFound = false;
+
+            // Check if the sensor touches ANY floor tile
+            for (const auto& floor : m_entities)
+            {
+				// Ignores self-collision & non-floor tiles
+                if (floor->getType() != EntityType::Standard) continue;
+
+				// Checks for intersection with the floor hitbox
+                if (edgeSensor.intersection(floor->getHitbox()))
+                {
+                    groundFound = true;
+					break; // No need to check further if ground is found
+                }
+            }
+
+			// If no ground found, turn around
+            if (!groundFound)
+                enemy->turnAround(); // Reverses direction
+        }
 
 		sf::Vector2f velocity = dynamicEntity->getVelocity();
 
@@ -313,7 +373,7 @@ void Simulation::loadLevel(const std::string& filename)
 
     std::string line;
     int y = 0;
-    int maxX = 0;
+	int maxX = 0; // To calculate level width (for the level size variable, used by the camera)
     float tileSize = 18.f; // How large a single floor tile is
 
 	// Reads each line from the file
@@ -333,8 +393,11 @@ void Simulation::loadLevel(const std::string& filename)
             }
 			x++;
         }
+        if (x > maxX) maxX = x;
         y++;
     }
+
+	m_levelSize = { maxX * tileSize, y * tileSize }; // Sets level size based on loaded tiles
 
 	// Ensures all enemies have reference to the player
     if (m_player)
@@ -368,7 +431,7 @@ void Simulation::createEntityFromId(int id, float x, float y)
         {
         case 999: // Player
         {
-			// Only creates the player if it doesn't already exist
+            // Only creates the player if it doesn't already exist
             if (!m_player)
             {
                 auto player = std::make_unique<PlayerEntity>(m_animationManager);
@@ -379,28 +442,46 @@ void Simulation::createEntityFromId(int id, float x, float y)
             m_player->setPosition(pos);
         }
         break;
-        case 998: // Enemy
-        {
-			auto enemy = std::make_unique<Enemy>(m_animationManager, 150.f); // 150.f patrol range
-            enemy->setPosition(pos);
-            m_entities.push_back(std::move(enemy));
-        }
-        break;
-        case 997: // Coin
+        case 998: // Coin
         {
             auto coin = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // NEED TO FIND COIN SPRITE
             coin->setPosition(pos);
             m_entities.push_back(std::move(coin));
         }
         break;
+        case 997: // Patrolling Enemy
+        {
+            auto enemy = std::make_unique<Enemy>(m_animationManager, 150.f); // 150.f patrol range
+            enemy->setPosition(pos);
+            m_entities.push_back(std::move(enemy));
         }
-		return; // Entity created, exit function
+        break;
+        case 996: // Stationary Enemy
+        {
+            auto enemy = std::make_unique<Enemy>(m_animationManager, 0.f); // 0.f patrol range - stationary
+            enemy->setPosition(pos);
+            m_entities.push_back(std::move(enemy));
+        }
+        break;
+        return; // Entity created, exit function
+        }
     }
 
 	// Tile Entities
-	std::string tileName = "tile_" + std::to_string(id - 1); // Generates the tile name based on the ID
+    int tileIndex = id - 1;
+	std::string tileName = "tile_" + std::to_string(tileIndex); // Generates the tile name based on the ID
 
-    auto tile = std::make_unique<Entity>(m_animationManager.getStaticSprite(tileName));
-    tile->setPosition(pos);
-    m_entities.push_back(std::move(tile));
+	// Attempts to get the static sprite and create the tile entity (Preents crash on missing texture, incorrect ID)
+    try
+    {
+        const StaticSprite& sprite = m_animationManager.getStaticSprite(tileName);
+
+        auto tile = std::make_unique<Entity>(sprite);
+        tile->setPosition(pos);
+        m_entities.push_back(std::move(tile));
+    }
+	catch (const std::exception&) // Missing texture or invalid ID
+    {
+        std::cout << "WARNING: Level loading skipped invalid Tile ID: " << id << " (Missing texture: " << tileName << ")" << std::endl;
+    }
 }

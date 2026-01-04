@@ -74,11 +74,11 @@ void Graphics::initUI()
 	m_titleText.setOrigin({ titleRect.size.x / 2.0f, titleRect.size.y / 2.0f }); // Centres the origin
 	m_titleText.setPosition({ 160.f, 50.f }); // Positions the title at the top centre of the screen
 
-	// Instruction Text (Press Space to Start)
+	// Instruction Text (Press Enter to Start)
     m_instructionText.setFont(m_font);
     m_instructionText.setCharacterSize(10);
     m_instructionText.setFillColor(sf::Color::Yellow);
-    m_instructionText.setString("Press SPACE to Start");
+    m_instructionText.setString("Press Enter to Start");
 
     sf::FloatRect instrRect = m_instructionText.getLocalBounds();
 	m_instructionText.setOrigin({ instrRect.size.x / 2.0f, instrRect.size.y / 2.0f }); // Centres the origin
@@ -148,8 +148,8 @@ void Graphics::display()
 		// Game State Management
         if (m_state == GameState::Frontend) // Frontend State
         {
-			// Begins the game on space key press
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+			// Begins the game on Enter key press
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
             {
 				m_simulation.reset(); // Ensures everything is reset for the start of the game
                 m_state = GameState::Ingame;
@@ -179,8 +179,8 @@ void Graphics::display()
         }
 		else if (m_state == GameState::Endgame) // Endgame State
         {
-            // Restarts the game on space key press
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+            // Restarts the game on Enter key press
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter))
             {
 				m_simulation.reset(); // Ensures everything is reset for the start of the game
                 m_state = GameState::Ingame;
@@ -304,23 +304,37 @@ void Graphics::render()
             float levelWidth = levelSize.x;
             float levelHeight = levelSize.y;
 
+			// Half dimensions of the view
+            float halfViewW = m_gameView.getSize().x / 2.f;
+            float halfViewH = m_gameView.getSize().y / 2.f;
+
             // Defining the camera bounds
             // X
-            float minX = m_gameView.getSize().x / 2.f;
-            float maxX = levelWidth - minX;
+			if (levelWidth <= m_gameView.getSize().x) // Level smaller than view width
+                lerpPos.x = halfViewW;
+            else
+            {
+                float minX = halfViewW;
+                float maxX = levelWidth - minX;
+
+                // Clamping the camera to the level bounds
+                if (lerpPos.x < minX) lerpPos.x = minX;
+                else if (lerpPos.x > maxX) lerpPos.x = maxX;
+            }
+            
 
             // Y
-            float minY = m_gameView.getSize().y / 2.f;
-            float maxY = levelHeight - minY;
+			if (levelHeight <= m_gameView.getSize().y) // Level smaller than view height
+                lerpPos.y = halfViewH;
+            else
+            {
+                float minY = halfViewH;
+                float maxY = levelHeight - minY;
 
-            // Clamping the camera to the level bounds
-            // X
-            if (lerpPos.x < minX) lerpPos.x = minX;
-            else if (lerpPos.x > maxX) lerpPos.x = maxX;
-
-            // Y
-            if (lerpPos.y < minY) lerpPos.y = minY;
-            else if (lerpPos.y > maxY) lerpPos.y = maxY;
+				// Clamping the camera to the level bounds
+                if (lerpPos.y < minY) lerpPos.y = minY;
+                else if (lerpPos.y > maxY) lerpPos.y = maxY;
+            }
 
             // Applying the new clamped camera position
             m_gameView.setCenter(lerpPos);
@@ -368,7 +382,7 @@ void Graphics::render()
     {
         m_titleText.setString("GEC GAME");
         m_titleText.setFillColor(sf::Color::White);
-        m_instructionText.setString("Press SPACE to Start");
+        m_instructionText.setString("Press Enter to Start");
 
         m_window.draw(m_titleText);
         m_window.draw(m_instructionText);
@@ -379,7 +393,7 @@ void Graphics::render()
     {
         m_titleText.setString("GAME OVER");
         m_titleText.setFillColor(sf::Color::Red);
-        m_instructionText.setString("Press SPACE to Restart");
+        m_instructionText.setString("Press Enter to Restart");
 
         m_window.draw(m_titleText);
         m_window.draw(m_scoreText);
