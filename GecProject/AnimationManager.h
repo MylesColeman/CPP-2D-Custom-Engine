@@ -30,7 +30,7 @@ public:
 	{
 		// Loading the sprite sheets
 		// Animations
-		// Player
+		// Player / Enemy - Enemy will be changed later
 		configureAnimation("playerIdle", "Data/Textures/Player/skeleton_idle.png", 4, 0.7f);
 		configureAnimation("playerJump", "Data/Textures/Player/skeleton_jump.png", 7, 0.15f);
 		configureAnimation("playerJumpShot", "Data/Textures/Player/skeleton_jumpShot.png", 8, 0.0625f);
