@@ -38,6 +38,9 @@ public:
 		configureAnimation("playerWalk", "Data/Textures/Player/skeleton_walk.png", 6);
 		configureAnimation("playerWalkShot", "Data/Textures/Player/skeleton_walkShot.png", 8, 0.0625f);
 
+		// Coin
+		configureAnimation("coin", "Data/Textures/World/coin.png", 10, 0.1f);
+
 		// Setting the pivot point of sprites that flip
 		float spineX = 6.5f;
 		float spineY = m_animations["playerIdle"].spriteHeight / 2.f;

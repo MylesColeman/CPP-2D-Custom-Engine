@@ -465,7 +465,7 @@ void Simulation::createEntityFromId(int id, float x, float y)
         break;
         case 998: // Coin
         {
-            auto coin = std::make_unique<Collectable>(m_animationManager.getAnimation("playerWalk")); // NEED TO FIND COIN SPRITE
+            auto coin = std::make_unique<Collectable>(m_animationManager.getAnimation("coin"));
             coin->setPosition(pos);
             m_entities.push_back(std::move(coin));
         }
