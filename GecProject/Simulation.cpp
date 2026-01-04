@@ -1,6 +1,4 @@
 #include "Simulation.h"
-#include <fstream>
-#include <sstream>
 
 Simulation::Simulation(TextureManager& textureManager) :
     m_animationManager(textureManager)
@@ -12,6 +10,7 @@ void Simulation::reset()
 {
     m_player = nullptr;
     m_score = 0;
+    m_levelComplete = false;
 
     m_inputManager.clearListeners();
 
@@ -181,10 +180,11 @@ void Simulation::update(float deltaTime)
 
         for (const auto& wall : m_entities)
         {
-			// Skips self-collision, collectable collision and player collision
+			// Skips self, collectable, player and door collision
             if (wall.get() == dynamicEntity) continue;          
             if (wall->getType() == EntityType::Collectable) continue;
             if (wall->getType() == EntityType::Player) continue;
+            if (wall->getType() == EntityType::Door) continue;
                 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle wallCheck = entityHitbox;
@@ -220,10 +220,11 @@ void Simulation::update(float deltaTime)
 
         for (const auto& floor : m_entities)
         {
-            // Skips self-collision & collectable collision
+            // Skips self, collectable, player and door collision
             if (floor.get() == dynamicEntity) continue;
             if (floor->getType() == EntityType::Collectable) continue;
             if (floor->getType() == EntityType::Player) continue;
+			if (floor->getType() == EntityType::Door) continue;
 
             // Creates a slimmer hitbox for wall checking
             CollisionRectangle floorCheck = entityHitbox;
@@ -327,6 +328,26 @@ void Simulation::update(float deltaTime)
     }
 
     const CollisionRectangle& playerHitbox = m_player->getHitbox();
+
+	// Door Collision - Level Completion
+    for (const auto& entity : m_entities)
+    {
+        if (entity->getType() == EntityType::Door)
+        {
+            if (playerHitbox.intersection(entity->getHitbox()))
+            {
+                float playerCenterX = playerHitbox.m_xPos + (playerHitbox.m_width / 2.f);
+
+                float doorCenterX = entity->getHitbox().m_xPos + (entity->getHitbox().m_width / 2.f);
+
+                // Calculate the distance between centers
+                float diffX = std::abs(playerCenterX - doorCenterX);
+
+				// If close enough to the center, mark level as complete - to simulate actually entering the door. Not just touching
+                if (diffX < 4.0f) { m_levelComplete = true; }
+            }
+        }
+    }
 
 	// Collectable Collision
     for (auto& entity : m_entities)
@@ -463,8 +484,16 @@ void Simulation::createEntityFromId(int id, float x, float y)
             m_entities.push_back(std::move(enemy));
         }
         break;
-        return; // Entity created, exit function
+        case 995: // Door (Level Exit)
+        {
+            const StaticSprite& sprite = m_animationManager.getStaticSprite("door");
+            auto door = std::make_unique<Door>(sprite);
+            door->setPosition(pos);
+            m_entities.push_back(std::move(door));
+		}
+        break;
         }
+        return; // Entity created, exit function
     }
 
 	// Tile Entities

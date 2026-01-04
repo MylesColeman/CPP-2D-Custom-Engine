@@ -155,6 +155,7 @@
     <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Collectable.h" />
+    <ClInclude Include="door.h" />
     <ClInclude Include="DynamicEntity.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="ExternalHeaders.h" />

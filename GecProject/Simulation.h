@@ -5,6 +5,7 @@
 #include "Collectable.h"
 #include "Bullet.h"
 #include "Enemy.h"
+#include "door.h"
 #include "InputManager.h"
 #include "CollisionRectangle.h"
 #include <vector>
@@ -12,6 +13,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 class Simulation
 {
@@ -31,6 +34,7 @@ public:
 
 	const PlayerEntity* getPlayer() const { return m_player; } //  Getter for the player entity, for use in graphics
 
+    bool isLevelComplete() const { return m_levelComplete; }
     int getScore() const { return m_score; } // For use in the graphics (game over screen)
 
 	// Colliders
@@ -53,6 +57,7 @@ private:
 
 	void createEntityFromId(int id, float x, float y); // Creates an entity based on the ID from the level file
 	sf::Vector2f m_levelSize{ 500.f, 500.f }; // Defines the size of the level for camera bounds
+	bool m_levelComplete{ false }; // Whether the level has been completed
 
 	std::vector<std::unique_ptr<Bullet>> m_bulletPool; // Defines all bullets in the simulation
 

@@ -77,6 +77,9 @@ public:
 			// Create the sprite configuration automatically
 			configureStaticSprite(tileName, "Data/Textures/World/tilemap_packed.png", sf::IntRect({ x, y }, { tileWidth, tileHeight }));
 		}
+
+		// Door
+		configureStaticSprite("door", "Data/Textures/World/door.png", sf::IntRect({ 0, 0 }, { 21, 28 }));
 	}
 
 	// Assigns variables to the structure, so the animation can be used

@@ -10,7 +10,8 @@ enum class EntityType
     Player,
     Collectable,
     Bullet,
-    Enemy
+    Enemy,
+    Door
 };
 
 // Our base class for entities within our game world, inherits from sf::Sprite to allow easy drawing and manipulation of sprites

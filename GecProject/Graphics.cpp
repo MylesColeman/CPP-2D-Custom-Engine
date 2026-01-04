@@ -166,7 +166,7 @@ void Graphics::display()
             }
 
 			// Check for death condition
-            if (m_simulation.isGameOver())
+            if (m_simulation.isGameOver() || m_simulation.isLevelComplete())
             {
                 m_state = GameState::Endgame; // Switch to endgame state
 
@@ -391,8 +391,24 @@ void Graphics::render()
         drawHUD();
 	else if (m_state == GameState::Endgame) // Endgame State
     {
-        m_titleText.setString("GAME OVER");
-        m_titleText.setFillColor(sf::Color::Red);
+        // Checks why the game ended
+        if (m_simulation.isGameOver())
+        {
+            m_titleText.setString("GAME OVER!");
+            m_titleText.setFillColor(sf::Color::Red);
+            
+        }
+        else if (m_simulation.isLevelComplete())
+        {
+            m_titleText.setString("LEVEL COMPLETE!");
+            m_titleText.setFillColor(sf::Color::Green);
+		}
+
+		// Recentres the title text, as "GAME OVER" and "LEVEL COMPLETE!" are different lengths
+        sf::FloatRect titleRect = m_titleText.getLocalBounds();
+        m_titleText.setOrigin({ titleRect.size.x / 2.0f, titleRect.size.y / 2.0f });
+        m_titleText.setPosition({ 160.f, 50.f });
+        
         m_instructionText.setString("Press Enter to Restart");
 
         m_window.draw(m_titleText);

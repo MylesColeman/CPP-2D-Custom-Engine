@@ -44,7 +44,7 @@ public:
         DynamicEntity::update(deltaTime); // Calls the base class update to handle animation and movement
     }
 private:
-    float m_lifetime{ 3.f }; // How long the bullet will last before being deactivated
+    float m_lifetime{ 1.f }; // How long the bullet will last before being deactivated
     bool m_active{ false };
     bool m_isEnemyBullet{ false }; // Used to differentiate between player and enemy bullets, for collisions
 };
