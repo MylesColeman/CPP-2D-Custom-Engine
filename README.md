@@ -3,7 +3,7 @@
 
 A highly flexible 2D game engine built from scratch using C++ and SFML. This project focuses on core engine architecture, modular asset management, and the implementation of robust design patterns for real-time simulation.
 
-> **[🔗 View the full technical breakdown on my Portfolio](https://sites.google.com/view/myles-coleman/projects/2d-game-engine-wip)**
+> **[🔗 View the full technical breakdown on my Portfolio](https://sites.google.com/view/myles-coleman/projects/2d-game-engine)**
 
 ## 📺 Development Showcase
 [![Engine Development Showcase](https://img.youtube.com/vi/8Y87SYCAyjg/0.jpg)](https://www.youtube.com/watch?v=8Y87SYCAyjg)
