@@ -7,7 +7,7 @@ A highly flexible 2D game engine built from scratch using C++ and SFML. This pro
 
 ## 📺 Development Showcase
 [![Engine Development Showcase](https://img.youtube.com/vi/8Y87SYCAyjg/0.jpg)](https://www.youtube.com/watch?v=8Y87SYCAyjg)
-*Out of data demo video showcasing sprite animation, observer-based input, and ImGui debug integration.*
+*Out of date demo video showcasing sprite animation, observer-based input, and ImGui debug integration.*
 
 ## 🕹️ Engine Architecture Overview
 This engine was designed to enforce a strict separation of concerns, moving away from monolithic codebases toward an encapsulated system where rendering, logic, and input are handled by dedicated managers.
